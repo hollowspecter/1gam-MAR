@@ -1,6 +1,7 @@
 package de.blogspot.hollowspecter.test;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Image;
+import com.haxepunk.graphics.Text;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 
@@ -14,6 +15,8 @@ class PlayerObj extends Entity
 	private var _rotation : Float;
 	private var _velocity : Float;
 	
+	private var _originMoved : Bool;
+	
 	public function new(x:Int, y:Int) 
 	{
 		super(x, y);
@@ -23,7 +26,7 @@ class PlayerObj extends Entity
 		_image.centerOrigin();
 		_image.scale = 3;
 		_rotation = -120;
-		_velocity = 5;
+		_velocity = 6;
 		
 		Input.define("up", [Key.UP, Key.W]);
 		Input.define("left", [Key.LEFT, Key.A]);
@@ -32,21 +35,36 @@ class PlayerObj extends Entity
 	
 	public override function update()
 	{	
-		 if (Input.check("left"))
-		 {
-			 _rotation += 5;
-		 }
-		 
-		 if (Input.check("right"))
-		 {
-			 _rotation -= 5;
-		 }
-		 
-		 velocity();
-		 
-		 //apply rotation
-		 _image.angle = _rotation;
-		 
+		if (Input.check("left"))                                    
+		{
+			_rotation += 5;
+		}
+		
+		if (Input.check("right"))
+		{
+			_rotation -= 5;
+		}
+		
+		//test button for changing the turning point
+		if (Input.check(Key.SPACE))
+		{
+			if (_originMoved == true) {
+				_image.originX = _image.width / 2;
+				_image.originY = _image.height / 4;
+				_originMoved = false;
+			} else if (_originMoved == false) {
+				_image.originX = _image.width / 2;
+				_image.originY = (_image.height / 4) * 3;
+				_originMoved = true;
+			}
+			
+		}
+		
+		velocity();
+		
+		//apply rotation
+		_image.angle = _rotation;
+		
 		super.update();
 	}
 	
