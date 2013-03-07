@@ -59,6 +59,8 @@ class Assets {
 			resourceTypes.set ("font/04B_03__.ttf", "font");
 			resourceClasses.set ("gfx/block.png", NME_gfx_block_png);
 			resourceTypes.set ("gfx/block.png", "image");
+			resourceClasses.set ("gfx/car.png", NME_gfx_car_png);
+			resourceTypes.set ("gfx/car.png", "image");
 			resourceClasses.set ("gfx/debug/console_debug.png", NME_gfx_debug_console_debug_png1);
 			resourceTypes.set ("gfx/debug/console_debug.png", "image");
 			resourceClasses.set ("gfx/debug/console_logo.png", NME_gfx_debug_console_logo_png1);

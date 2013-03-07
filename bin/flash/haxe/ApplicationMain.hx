@@ -142,6 +142,11 @@ class ApplicationMain {
             return Assets.getBitmapData ("gfx/block.png");
          
 		
+		if (inName=="gfx/car.png")
+			 
+            return Assets.getBitmapData ("gfx/car.png");
+         
+		
 		if (inName=="gfx/debug/console_debug.png")
 			 
             return Assets.getBitmapData ("gfx/debug/console_debug.png");
@@ -205,6 +210,7 @@ class NME_gfx_debug_console_step_png extends nme.display.BitmapData { public fun
 class NME_gfx_preloader_haxepunk_png extends nme.display.BitmapData { public function new () { super (0, 0); } }
 class NME_font_04b_03___ttf extends nme.text.Font { }
 class NME_gfx_block_png extends nme.display.BitmapData { public function new () { super (0, 0); } }
+class NME_gfx_car_png extends nme.display.BitmapData { public function new () { super (0, 0); } }
 class NME_gfx_debug_console_debug_png1 extends nme.display.BitmapData { public function new () { super (0, 0); } }
 class NME_gfx_debug_console_logo_png1 extends nme.display.BitmapData { public function new () { super (0, 0); } }
 class NME_gfx_debug_console_output_png1 extends nme.display.BitmapData { public function new () { super (0, 0); } }
