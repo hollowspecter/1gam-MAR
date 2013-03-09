@@ -1,0 +1,14 @@
+### Todo ###
+- collision
+- a map
+- maphandling
+- hindernisse
+- menü, anfang und ende eines levels
+
+### Bugs to fix ###
+- proper physics aka acceleration and breaks
+
+### Notes ###
+- Zuerst ein Level aus der Mitte fertig ausgestalten mit Anfang und Ende, Spiel spielbar machen,
+  dann Tutorial, einfachere oder schwerere Level einfügen
+- Tutorial mit grade ausfahren, rückwärts fahren zeugs, und slalom fahren, um sich an die steuerung zu gewöhnen mit textpopups
