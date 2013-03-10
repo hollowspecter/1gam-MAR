@@ -44,6 +44,9 @@ class PlayerObj extends Entity
 		Input.define("left", [Key.LEFT, Key.A]);
 		Input.define("right", [Key.RIGHT, Key.D]);
 		Input.define("down", [Key.DOWN, Key.S]);
+		
+		//Hitbox handling
+		//setHitbox(_image.width*3, _image.height*3, _image.originX, _image.originY);
 	}
 	
 	public override function update()
@@ -68,9 +71,7 @@ class PlayerObj extends Entity
 		{
 			if (_velocity < _maxVelocity)
 				_velocity += 0.5;
-		}
-		
-		if (Input.check("down"))
+		} else if (Input.check("down"))
 		{
 			if (_velocity > -5) {
 				_velocity -= 0.5;
