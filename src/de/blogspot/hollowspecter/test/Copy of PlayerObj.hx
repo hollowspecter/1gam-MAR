@@ -1,11 +1,7 @@
 package de.blogspot.hollowspecter.test;
-import com.haxepunk.HXP;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Image;
-import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.graphics.Text;
-import com.haxepunk.Sfx;
-import com.haxepunk.tweens.sound.SfxFader;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 
@@ -16,7 +12,7 @@ import com.haxepunk.utils.Key;
 
 class PlayerObj extends Entity
 {
-	private var sprite:Spritemap;
+	private var _image : Image;
 	private var _rotation : Float;
 	private var _rotationSpd : Int;
 	private var _maxRotationSpd : Int;
@@ -24,22 +20,17 @@ class PlayerObj extends Entity
 	private var _maxVelocity : Float;
 	private var _acceleration : Float;
 	private var _breaks : Float;
+	
 	private var _backGear : Bool;
 	
 	public function new(x:Int, y:Int, ?_maxRotationSpd:Int, ?_maxVelocity:Float, ?_acceleration:Float, ?_breaks:Float)
 	{
 		super(x, y);
-		//create new spritemap
-		sprite = new Spritemap("gfx/car_animation.png", 12, 17);
-		//define animations
-		sprite.add("idle", [0]);
-		sprite.add("right", [1]);
-		sprite.add("left", [2]);
-		graphic = sprite;
-		sprite.originX = sprite.width / 2;
-		sprite.originY = (sprite.height / 4) * 3;
-		sprite.scale = 3;
-		sprite.play("idle", false);
+		_image = new Image("gfx/car.png");
+		graphic = _image;
+		_image.originX = _image.width / 2;
+		_image.originY = (_image.height / 4) * 3;
+		_image.scale = 3;
 		_rotation = 0;
 		_velocity = 0;
 		_rotationSpd = 0;
@@ -54,13 +45,8 @@ class PlayerObj extends Entity
 		Input.define("right", [Key.RIGHT, Key.D]);
 		Input.define("down", [Key.DOWN, Key.S]);
 		
-		collidable = true;
-		visible = true;
-		type = "car";
-		name = "player";
-		
 		//Hitbox handling
-		setHitbox();
+		//setHitbox(_image.width*3, _image.height*3, _image.originX, _image.originY);
 	}
 	
 	public override function update()
@@ -70,26 +56,23 @@ class PlayerObj extends Entity
 		
 		if (Input.check("left"))                                    
 		{
-			sprite.play("left", false);
 			if (_velocity != 0)
 				_rotation += _rotationSpd;
 		}
 		
 		if (Input.check("right"))
 		{
-			sprite.play("right", false);
 			if (_velocity != 0) {
 				_rotation -= _rotationSpd;
 			}
-		} else if (!Input.check("left")) sprite.play("idle", false);
+		}
 		
-		//Starts car up. car sound starts playing then
 		if (Input.check("up"))
 		{
 			if (_velocity < _maxVelocity)
 				_velocity += 0.5;
 		} else if (Input.check("down"))
-		{			
+		{
 			if (_velocity > -5) {
 				_velocity -= 0.5;
 			}
@@ -113,30 +96,20 @@ class PlayerObj extends Entity
 		velocity();
 		
 		//apply rotation
-		sprite.angle = _rotation;
-		
-		//set camera
-		HXP.camera.x = (HXP.camera.x + (x - HXP.halfWidth)) * 0.5;
-		HXP.camera.y = (HXP.camera.y + (y - HXP.halfHeight)) * 0.5;
-		normalizeCamera();
+		_image.angle = _rotation;
 		
 		super.update();
 	}
 	
 	public function velocity()
 	{
-		var _radians:Float = toRadians(sprite.angle);
+		var _radians:Float = toRadians(_image.angle);
 	 	moveBy( -Math.sin(_radians) * _velocity, -Math.cos(_radians) * _velocity);
 	}
 	
 	public inline static function toRadians(deg:Float):Float
 	{
 		return deg * (Math.PI / 180.0);
-	}
-	
-	public inline static function toDegrees(rad:Float):Float
-	{
-		return rad * (180.0 / Math.PI);
 	}
 	
 	public function regulateRotationSpd()
@@ -159,41 +132,5 @@ class PlayerObj extends Entity
 			_backGear = false;
 		else
 			_backGear = true;
-	}
-	
-	/**
-	 * Normalizes camera when it is showing stuff out of bounds
-	 * @return when true: camera was being normalized. when false: nothing happened
-	 */
-	
-	public function normalizeCamera():Bool
-	{
-		var _normalized:Bool = false;
-		
-		//too far to the right
-		if ((GameWorld.kMaxWidth - this.x) < HXP.halfWidth) {
-			HXP.camera.x = GameWorld.kMaxWidth - HXP.width;
-			_normalized = true;
-		}
-		
-		//too close to the left
-		if (this.x < HXP.halfWidth) {
-			HXP.camera.x = 0;
-			_normalized = true;
-		}
-		
-		//too close to the top
-		if (this.y < HXP.halfHeight) {
-			HXP.camera.y = 0;
-			_normalized = true;
-		}
-		
-		//too far to the bottom
-		if ((GameWorld.kMaxHeight - this.y) < HXP.halfHeight) {
-			HXP.camera.y = GameWorld.kMaxHeight - HXP.height;
-			_normalized = true;
-		}
-		
-		return _normalized;
 	}
 }

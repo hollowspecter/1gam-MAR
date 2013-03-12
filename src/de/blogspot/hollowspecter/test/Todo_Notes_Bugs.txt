@@ -1,3 +1,8 @@
+Crazy Lava Panzer Taxi
+- you have to collect people and bring them to their destination
+- you have to avoid the lava
+- the faster oyu are the more money you get
+
 ### Todo ###
 - collision
 - a map
@@ -12,3 +17,6 @@
 - Zuerst ein Level aus der Mitte fertig ausgestalten mit Anfang und Ende, Spiel spielbar machen,
   dann Tutorial, einfachere oder schwerere Level einfügen
 - Tutorial mit grade ausfahren, rückwärts fahren zeugs, und slalom fahren, um sich an die steuerung zu gewöhnen mit textpopups
+
+### Thanks to ###
+- The faces by http://opengameart.org/content/political-advisors

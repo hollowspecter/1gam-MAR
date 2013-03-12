@@ -23,6 +23,7 @@
 	<assets path="assets/sfx" rename="sfx" type="sound" include="*.wav" />
 	<assets path="assets/music" rename="music" type="music" include="*.mp3" />
 	<assets path="assets/font" rename="font" type="font" include="*.ttf" />
+	<assets path="assets/maps" rename="maps" type="map" inclue=".tmx" />
 
 	<!-- DLLs -->
 	<ndll name="std" />

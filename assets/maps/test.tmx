@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="40" height="30" tilewidth="24" tileheight="24">
+ <tileset firstgid="1" name="first" tilewidth="24" tileheight="24">
+  <image source="../gfx/tileset_scaled.png" trans="ff9a26" width="96" height="72"/>
+ </tileset>
+ <layer name="lava" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztwzENAAAMBKGb3r/k2ugACaumqqqqqk8fBngcIQ==
+  </data>
+ </layer>
+ <layer name="street" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzt1ksKwCAMRVGrFn/732/bQcGJEiGCkPvggqNwhjpnZ+ktduXB++vGhw8fvgN8Vam24CuCe//ipmY+Sfjw4cNn3eeVCgu+S3BPe1b/B/jw4cN3um/HHv7PC00=
+  </data>
+ </layer>
+ <layer name="collision" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztlrENACAMw5j4/2RegDpFSNhSxyqe0o6RYRbnFpUs/ViWfixLP5a1s1PtrUSXvdaRp+jH0I+hH0M/hn6M5O3tur8pfv2vUujH0I+hH6Or0xdOcgMx
+  </data>
+ </layer>
+</map>

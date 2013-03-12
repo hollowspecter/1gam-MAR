@@ -61,6 +61,8 @@ class Assets {
 			resourceTypes.set ("gfx/block.png", "image");
 			resourceClasses.set ("gfx/car.png", NME_gfx_car_png);
 			resourceTypes.set ("gfx/car.png", "image");
+			resourceClasses.set ("gfx/car_animation.png", NME_gfx_car_animation_png);
+			resourceTypes.set ("gfx/car_animation.png", "image");
 			resourceClasses.set ("gfx/debug/console_debug.png", NME_gfx_debug_console_debug_png1);
 			resourceTypes.set ("gfx/debug/console_debug.png", "image");
 			resourceClasses.set ("gfx/debug/console_logo.png", NME_gfx_debug_console_logo_png1);
@@ -73,8 +75,22 @@ class Assets {
 			resourceTypes.set ("gfx/debug/console_play.png", "image");
 			resourceClasses.set ("gfx/debug/console_step.png", NME_gfx_debug_console_step_png1);
 			resourceTypes.set ("gfx/debug/console_step.png", "image");
+			resourceClasses.set ("gfx/ppl/1.png", NME_gfx_ppl_1_png);
+			resourceTypes.set ("gfx/ppl/1.png", "image");
+			resourceClasses.set ("gfx/ppl/faces.png", NME_gfx_ppl_faces_png);
+			resourceTypes.set ("gfx/ppl/faces.png", "image");
+			resourceClasses.set ("gfx/tileset.png", NME_gfx_tileset_png);
+			resourceTypes.set ("gfx/tileset.png", "image");
+			resourceClasses.set ("gfx/tileset_scaled.png", NME_gfx_tileset_scaled_png);
+			resourceTypes.set ("gfx/tileset_scaled.png", "image");
+			resourceClasses.set ("sfx/acceleration.wav", NME_sfx_acceleration_wav);
+			resourceTypes.set ("sfx/acceleration.wav", "sound");
+			resourceClasses.set ("sfx/car.wav", NME_sfx_car_wav);
+			resourceTypes.set ("sfx/car.wav", "sound");
 			resourceClasses.set ("font/04B_03__.ttf", NME_font_5);
 			resourceTypes.set ("font/04B_03__.ttf", "font");
+			resourceClasses.set ("maps/test.tmx", NME_maps_test_tmx);
+			resourceTypes.set ("maps/test.tmx", "text");
 			
 			
 			initialized = true;
