@@ -25,8 +25,10 @@ class PlayerObj extends Entity
 	private var _acceleration : Float;
 	private var _breaks : Float;
 	private var _backGear : Bool;
+	private var _lifes : Int;
+	private var _startPos : Array<Float>;
 	
-	public function new(x:Int, y:Int, ?_maxRotationSpd:Int, ?_maxVelocity:Float, ?_acceleration:Float, ?_breaks:Float)
+	public function new(x:Int, y:Int, _lifes:Int, ?_maxRotationSpd:Int, ?_maxVelocity:Float, ?_acceleration:Float, ?_breaks:Float)
 	{
 		super(x, y);
 		//create new spritemap
@@ -43,6 +45,7 @@ class PlayerObj extends Entity
 		_rotation = 0;
 		_velocity = 0;
 		_rotationSpd = 0;
+		this._lifes = _lifes;
 		
 		this._maxRotationSpd = (_maxRotationSpd == null) ? 8 : _maxRotationSpd;
 		this._maxVelocity = (_maxVelocity == null) ? 15 : _maxVelocity;
@@ -59,8 +62,8 @@ class PlayerObj extends Entity
 		type = "car";
 		name = "player";
 		
-		//Hitbox handling
 		setHitbox();
+		_startPos = [x, y];
 	}
 	
 	public override function update()
@@ -109,7 +112,6 @@ class PlayerObj extends Entity
 			}
 		}
 		
-
 		velocity();
 		
 		//apply rotation
@@ -121,6 +123,28 @@ class PlayerObj extends Entity
 		normalizeCamera();
 		
 		super.update();
+	}
+	
+	public function death()
+	{
+		setLifes(getLifes() - 1);
+		x = _startPos[0];
+		y = _startPos[1];
+	}
+	
+	public override function moveCollideX(e:Entity) : Bool
+	{
+		if (e.type == "lava")
+		{
+			death();
+		}
+		return super.moveCollideX(e);
+	}
+	
+	public override function moveCollideY(e:Entity) : Bool
+	{
+		moveCollideX(e);
+		return super.moveCollideY(e);
 	}
 	
 	public function velocity()
@@ -153,6 +177,10 @@ class PlayerObj extends Entity
 			_rotationSpd = 5;
 	}
 	
+	/**
+	 * Checks if car is driving backwards or not.
+	 * toggles _backgear
+	 */
 	public function checkBackGear()
 	{
 		if (_velocity >= 0)
@@ -195,5 +223,16 @@ class PlayerObj extends Entity
 		}
 		
 		return _normalized;
+	}
+	
+	//lifes getter and setter
+	public function getLifes():Int
+	{
+		return _lifes;
+	}
+	
+	public function setLifes(lifes:Int)
+	{
+		_lifes = lifes;
 	}
 }
