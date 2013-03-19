@@ -128,6 +128,8 @@ class PlayerObj extends Entity
 	public function death()
 	{
 		setLifes(getLifes() - 1);
+		_velocity = 0;
+		_rotation = 0;
 		x = _startPos[0];
 		y = _startPos[1];
 	}
@@ -150,7 +152,7 @@ class PlayerObj extends Entity
 	public function velocity()
 	{
 		var _radians:Float = toRadians(sprite.angle);
-	 	moveBy( -Math.sin(_radians) * _velocity, -Math.cos(_radians) * _velocity);
+	 	moveBy( -Math.sin(_radians) * _velocity, -Math.cos(_radians) * _velocity, ["lava"]);
 	}
 	
 	public inline static function toRadians(deg:Float):Float
