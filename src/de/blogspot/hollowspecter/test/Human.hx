@@ -40,7 +40,7 @@ class Human extends Entity
 	
 	public override function update()
 	{
-		if (shouldMove())
+		if (carIsInReach())
 		{
 		//rotate towards car and move!
 		rotateTowards(HXP.world.getInstance("player").x, HXP.world.getInstance("player").y);
@@ -52,7 +52,7 @@ class Human extends Entity
 	}
 	
 	//check if car is close-by and in eye-sight
-	public function shouldMove():Bool
+	public function carIsInReach():Bool
 	{
 		//is car close enough
 		var dx = HXP.world.getInstance("player").x - x;

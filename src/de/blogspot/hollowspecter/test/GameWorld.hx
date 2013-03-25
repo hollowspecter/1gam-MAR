@@ -51,6 +51,7 @@ class GameWorld extends com.haxepunk.World
 		var e = new TmxEntity("maps/test.tmx");
 		e.loadGraphic("gfx/tileset_scaled.png", ["lava", "street"]);
 		e.loadMask("collision", "lava");
+		add(e);
 		
 		//set maxheight and maxwidth of the map
 		kMaxWidth = e.map.fullWidth;
@@ -64,13 +65,10 @@ class GameWorld extends com.haxepunk.World
 			{
 				if (obj.type == "spawn")
 				{
-					trace("human should be added nao");
 					add(new Human(obj.x, obj.y));
 				}
 			}
 		}
-		
-		add(e);
 	}
 	
 	/**
