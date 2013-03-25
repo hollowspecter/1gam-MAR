@@ -1,14 +1,13 @@
 Crazy Lava Panzer Taxi
 - you have to collect people and bring them to their destination
 - you have to avoid the lava
-- the faster oyu are the more money you get
+- the faster you are the more money you get
 
 ### Todo ###
-- collision
 - a map
 - maphandling
-- hindernisse
-- menü, anfang und ende eines levels
+- obstacles
+- menu, beginning and end
 
 ### Bugs to fix ###
 - proper physics aka acceleration and breaks
