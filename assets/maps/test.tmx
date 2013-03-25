@@ -3,6 +3,9 @@
  <tileset firstgid="1" name="first" tilewidth="24" tileheight="24">
   <image source="../gfx/tileset_scaled.png" trans="ff9a26" width="96" height="72"/>
  </tileset>
+ <tileset firstgid="13" name="spawntiles" tilewidth="24" tileheight="24">
+  <image source="../gfx/spawntiles.png" trans="ff9a26" width="48" height="24"/>
+ </tileset>
  <layer name="lava" width="40" height="30">
   <data encoding="base64" compression="zlib">
    eJztwzENAAAMBKGb3r/k2ugACaumqqqqqk8fBngcIQ==
@@ -18,4 +21,8 @@
    eJztlrENACAMw5j4/2RegDpFSNhSxyqe0o6RYRbnFpUs/ViWfixLP5a1s1PtrUSXvdaRp+jH0I+hH0M/hn6M5O3tur8pfv2vUujH0I+hH6Or0xdOcgMx
   </data>
  </layer>
+ <objectgroup name="points" width="40" height="30">
+  <object type="spawn" gid="13" x="63" y="265"/>
+  <object type="destination" gid="14" x="860" y="363"/>
+ </objectgroup>
 </map>

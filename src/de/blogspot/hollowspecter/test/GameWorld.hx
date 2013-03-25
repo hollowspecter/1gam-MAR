@@ -3,6 +3,7 @@ package de.blogspot.hollowspecter.test;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Text;
 import com.haxepunk.tmx.TmxEntity;
+import com.haxepunk.tmx.TmxObjectGroup;
 import com.haxepunk.World;
 import com.haxepunk.HXP;
 import com.haxepunk.graphics.Image;
@@ -25,7 +26,7 @@ class GameWorld extends com.haxepunk.World
 	{
 		loadLevel();
 		add(player);
-		add(new Human(400, 400));
+		//add(new Human(400, 400));
 		HUD();
 	}
 	
@@ -46,11 +47,28 @@ class GameWorld extends com.haxepunk.World
 	 */
 	public function loadLevel()
 	{
+		//load map with tiles
 		var e = new TmxEntity("maps/test.tmx");
 		e.loadGraphic("gfx/tileset_scaled.png", ["lava", "street"]);
 		e.loadMask("collision", "lava");
+		
+		//set maxheight and maxwidth of the map
 		kMaxWidth = e.map.fullWidth;
 		kMaxHeight = e.map.fullHeight;
+		
+		//load all the objects, spawnpoints, destinations into the map
+		var objects : TmxObjectGroup = e.map.getObjectGroup("points");
+		if (objects != null)
+		{
+			for (obj in objects.objects)
+			{
+				if (obj.type == "spawn")
+				{
+					trace("human should be added nao");
+					add(new Human(obj.x, obj.y));
+				}
+			}
+		}
 		
 		add(e);
 	}
