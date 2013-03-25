@@ -32,6 +32,12 @@ class GameWorld extends com.haxepunk.World
 	public override function update()
 	{
 		updateHUD();
+		
+		if (player.getLifes() <= 0)
+		{
+			HXP.world = new GameOverWorld();
+		}
+		
 		super.update();
 	}
 	

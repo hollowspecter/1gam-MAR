@@ -15,7 +15,7 @@ class MenuWorld extends World
 {
 	var title_:Text;
 	var title2_:Text;
-	var rainbow_:Int = 0;
+	public static var rainbow_:Int = 0;
 
 	public function new() 
 	{
@@ -64,7 +64,7 @@ class MenuWorld extends World
 		super.update();
 	}
 	
-	public function changeColor(color:Int):Int
+	public static function changeColor(color:Int):Int
 	{
 		if (rainbow_ == 0)
 		{
