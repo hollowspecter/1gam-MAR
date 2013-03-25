@@ -16,6 +16,7 @@ class Human extends Entity
 	private var _id:Int;
 	private var _image:Image;
 	private var _rotation:Float;
+	private var _allowedDistance:Int;
 	
 	public function new(x:Float, y:Float)
 	{
@@ -24,6 +25,7 @@ class Human extends Entity
 		//misc
 		_type = "human";
 		_rotation = 90;
+		_allowedDistance = 150;
 		
 		//copy id, then increment static id
 		_id = id;
@@ -38,14 +40,29 @@ class Human extends Entity
 	
 	public override function update()
 	{
-		//rotate towards car
+		if (shouldMove())
+		{
+		//rotate towards car and move!
 		rotateTowards(HXP.world.getInstance("player").x, HXP.world.getInstance("player").y);
 		_image.angle = _rotation;
-		
-		//and move!
 		moveForward(3);
+		}
 		
 		super.update();
+	}
+	
+	//check if car is close-by and in eye-sight
+	public function shouldMove():Bool
+	{
+		//is car close enough
+		var dx = HXP.world.getInstance("player").x - x;
+		var dy = HXP.world.getInstance("player").y - y;
+		var distance = Math.sqrt(dx * dx + dy * dy);
+		
+		if (distance < _allowedDistance)
+			return true;
+		else
+			return false;
 	}
 	
 	//rotates human towards the target
