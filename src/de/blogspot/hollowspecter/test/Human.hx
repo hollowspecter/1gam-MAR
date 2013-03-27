@@ -25,6 +25,9 @@ class Human extends Entity
 	private var _saying:Text;
 	private var _personCount:Int;
 	
+	//modifier
+	private var _gotHonkedAt:Bool;
+	
 	public function new(x:Float, y:Float)
 	{
 		super(x, y);
@@ -33,6 +36,9 @@ class Human extends Entity
 		_type = "human";
 		_rotation = 90;
 		_allowedDistance = 150;
+		
+		//modifier
+		_gotHonkedAt = false;
 		
 		//copy id, then increment static id
 		_id = id;
@@ -70,7 +76,7 @@ class Human extends Entity
 	
 	public override function update()
 	{
-		if (carIsInReach())
+		if (carIsInReach() && _gotHonkedAt)
 		{
 		//rotate towards car and move!
 		rotateTowards(HXP.world.getInstance("player").x, HXP.world.getInstance("player").y);
@@ -110,7 +116,11 @@ class Human extends Entity
 		var distance = Math.sqrt(dx * dx + dy * dy);
 		
 		if (distance < _allowedDistance)
+		{
+			if (PlayerObj._honks)
+				_gotHonkedAt = true;
 			return true;
+		}
 		else
 			return false;
 	}

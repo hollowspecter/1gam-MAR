@@ -29,7 +29,7 @@ class PlayerObj extends Entity
 	private var _startPos : Array<Float>;
 	
 	//modifyer
-	private var _honks : Bool;
+	public static var _honks : Bool;
 	
 	//sounds
 	private var _sfxHonk : Sfx;
@@ -268,5 +268,10 @@ class PlayerObj extends Entity
 	public function setLifes(lifes:Int)
 	{
 		_lifes = lifes;
+	}
+	
+	public static function getHonks():Bool
+	{
+		return _honks;
 	}
 }
