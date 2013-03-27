@@ -75,9 +75,9 @@ class Human extends Entity
 		//speaking
 		//reposition face image
 		_faces.x = HXP.camera.x + 20;
-		_faces.y = HXP.camera.y + HXP.windowHeight;
+		_faces.y = HXP.camera.y + 510;
 		_saying.x = HXP.camera.x + 120;
-		_saying.y = HXP.camera.y + HXP.windowHeight;
+		_saying.y = HXP.camera.y + 510;
 		if (Input.check("speak"))
 			speak("Luca is doof.\nVivi is cool!");
 		else {
