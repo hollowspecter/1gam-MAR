@@ -28,6 +28,12 @@ class PlayerObj extends Entity
 	private var _lifes : Int;
 	private var _startPos : Array<Float>;
 	
+	//modifyer
+	private var _honks : Bool;
+	
+	//sounds
+	private var _sfxHonk : Sfx;
+	
 	public function new(x:Int, y:Int, _lifes:Int, ?_maxRotationSpd:Int, ?_maxVelocity:Float, ?_acceleration:Float, ?_breaks:Float)
 	{
 		super(x, y);
@@ -56,14 +62,19 @@ class PlayerObj extends Entity
 		Input.define("left", [Key.LEFT, Key.A]);
 		Input.define("right", [Key.RIGHT, Key.D]);
 		Input.define("down", [Key.DOWN, Key.S]);
+		Input.define("honk", [Key.SPACE]);
 		
 		collidable = true;
 		visible = true;
 		type = "car";
 		name = "player";
+		_honks = false;
 		
 		setHitbox();
 		_startPos = [x, y];
+		
+		//sfx
+		_sfxHonk = new Sfx("sfx/honk.wav", function() { _honks = false; } );
 	}
 	
 	public override function update()
@@ -112,6 +123,13 @@ class PlayerObj extends Entity
 			}
 		}
 		
+		//honking
+		if (Input.check("honk"))
+		{
+			honk();
+			_honks = true;
+		}
+		
 		velocity();
 		
 		//apply rotation
@@ -125,6 +143,10 @@ class PlayerObj extends Entity
 		super.update();
 	}
 	
+	/**
+	 * reduces life.
+	 * sets back velocity, rotation, and position.
+	 */
 	public function death()
 	{
 		setLifes(getLifes() - 1);
@@ -132,6 +154,16 @@ class PlayerObj extends Entity
 		_rotation = 0;
 		x = _startPos[0];
 		y = _startPos[1];
+	}
+	
+	/**
+	 * Plays the honking sound. Sets _honks to true.
+	 * Attracts people into taxi.
+	 */
+	public function honk()
+	{
+		if (!_sfxHonk.playing)
+			_sfxHonk.play();
 	}
 	
 	public override function moveCollideX(e:Entity) : Bool
