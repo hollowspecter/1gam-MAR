@@ -18,11 +18,12 @@ class Human extends Entity
 {
 	private static var id:Int = 0;
 	private var _id:Int;
-	private var _image:Image;
 	private var _rotation:Float;
 	private var _allowedDistance:Int;
 	private var _faces:Spritemap;
+	private var _bodies:Spritemap;
 	private var _saying:Text;
+	private var _personCount:Int;
 	
 	public function new(x:Float, y:Float)
 	{
@@ -37,16 +38,21 @@ class Human extends Entity
 		_id = id;
 		id++;
 		
-		//dealing with the graphic
-		_image = new Image("gfx/ppl/1.png");
-		_image.scale = 3;
-		_image.centerOrigin();
-		graphic = _image;
+		//shuffle through all the 16 different people and store in _personCount
+		_personCount = Std.random(16);
+		
+		//dealing with bodies
+		_bodies = new Spritemap("gfx/ppl/ppl.png", 9, 6, null, "bodies");
+		_bodies.add("body", [_personCount]);
+		_bodies.play("body", false);
+		_bodies.scale = 3;
+		_bodies.centerOrigin();
+		graphic = _bodies;
 		
 		//break down faces spritemap
 		//position and scale face image
 		_faces = new Spritemap("gfx/ppl/faces.png", 28, 29, null, "faces");
-		_faces.add("face", [6]);
+		_faces.add("face", [_personCount]);
 		_faces.play("face", false);
 		_faces.scale = 3;
 		_faces.visible = false;
@@ -68,7 +74,7 @@ class Human extends Entity
 		{
 		//rotate towards car and move!
 		rotateTowards(HXP.world.getInstance("player").x, HXP.world.getInstance("player").y);
-		_image.angle = _rotation;
+		_bodies.angle = _rotation;
 		moveForward(3);
 		}
 		
@@ -120,7 +126,7 @@ class Human extends Entity
 	 
 	public function moveForward(velocity:Float)
 	{
-		var _radians:Float = PlayerObj.toRadians(_image.angle);
+		var _radians:Float = PlayerObj.toRadians(_bodies.angle);
 		moveBy( Math.sin(_radians) * velocity, Math.cos(_radians) * velocity);
 	}
 	

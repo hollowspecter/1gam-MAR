@@ -24,5 +24,6 @@
  <objectgroup name="points" width="40" height="30">
   <object type="spawn" gid="13" x="63" y="265"/>
   <object type="destination" gid="14" x="860" y="363"/>
+  <object type="spawn" gid="13" x="63" y="265"/>
  </objectgroup>
 </map>
