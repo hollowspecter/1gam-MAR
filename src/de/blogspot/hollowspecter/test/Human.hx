@@ -16,7 +16,7 @@ import com.haxepunk.utils.Key;
  */
 class Human extends Entity
 {
-	private static var id:Int = 0;
+	private static var id:Int = 1;
 	private var _id:Int;
 	private var _rotation:Float;
 	private var _allowedDistance:Int;
@@ -28,6 +28,12 @@ class Human extends Entity
 	//modifier
 	private var _gotHonkedAt:Bool;
 	
+	//modes
+	//if 0 then it has not entered a car yet
+	//if 1 then it is IN the car
+	//if 2 it has left the car
+	private var mode:Int;
+	
 	public function new(x:Float, y:Float)
 	{
 		super(x, y);
@@ -36,6 +42,9 @@ class Human extends Entity
 		_type = "human";
 		_rotation = 90;
 		_allowedDistance = 150;
+		mode = 0;
+		visible = true;
+		collidable = true;
 		
 		//modifier
 		_gotHonkedAt = false;
@@ -70,18 +79,20 @@ class Human extends Entity
 		_saying.visible = false;
 		HXP.world.addGraphic(_saying);
 		
+		setHitbox(9*3,6*3,0,0);
+		
 		//input handling can be taken out when tests are over
 		Input.define("speak", [Key.T]);
 	}
 	
 	public override function update()
 	{
-		if (carIsInReach() && _gotHonkedAt)
+		if (carIsInReach() && _gotHonkedAt && mode == 0)
 		{
-		//rotate towards car and move!
-		rotateTowards(HXP.world.getInstance("player").x, HXP.world.getInstance("player").y);
-		_bodies.angle = _rotation;
-		moveForward(3);
+			//rotate towards car and move!
+			rotateTowards(HXP.world.getInstance("player").x, HXP.world.getInstance("player").y);
+			_bodies.angle = _rotation;
+			moveForward(3);
 		}
 		
 		//speaking
@@ -98,6 +109,30 @@ class Human extends Entity
 		}
 		
 		super.update();
+	}
+	
+	/**
+	 * Basically the Human going into the car. Turns human invisible, uncollidable, and
+	 * stores humans id in the playerobj-idadding-var, this var is being added
+	 * to the seats then. If addingID is -1, the car is full!
+	 * @param	e entity colliding with, here: just the car
+	 * @return bool, if collided or not
+	 */
+	public override function moveCollideX(e:Entity) : Bool
+	{
+		if (e.type == "car" && PlayerObj.idAdding >= 0)
+		{
+			visible = false;
+			collidable = false;
+			PlayerObj.idAdding = _id;
+		}
+		return super.moveCollideX(e);
+	}
+	
+	public override function moveCollideY(e:Entity) : Bool
+	{
+		moveCollideX(e);
+		return super.moveCollideY(e);
 	}
 	
 	public function speak(text:String)
@@ -137,7 +172,7 @@ class Human extends Entity
 	public function moveForward(velocity:Float)
 	{
 		var _radians:Float = PlayerObj.toRadians(_bodies.angle);
-		moveBy( Math.sin(_radians) * velocity, Math.cos(_radians) * velocity);
+		moveBy( Math.sin(_radians) * velocity, Math.cos(_radians) * velocity, ["car"]);
 	}
 	
 	public function normalizeRotation(r:Int):Int

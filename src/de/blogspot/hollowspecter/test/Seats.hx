@@ -10,13 +10,17 @@ class Seats
 {
 	private var _seats : Array<Int>;
 	private var _occupied : Bool;
-	private var _capacity(getCapacity,setCapacity) : Int;
-	
-	public function new(_capacity:Int) 
+	private var _capacity : Int;
+		
+	/**
+	 * Create seatings for the car
+	 * @param	_capacity Capacity of the car. Minimum 1, Maximum 3
+	 */
+	public function new(cap:Int) 
 	{
-		this._capacity = capacity;
+		setCapacity(cap);
 		this._occupied = false;
-		_seats = new Array<Int>;
+		_seats = new Array<Int>();
 	}
 	
 	/**
@@ -26,16 +30,18 @@ class Seats
 	 */
 	public function add(id:Int):Bool
 	{
-		if (!_seats.length >= _capacity)
+		var foo:Bool = false;
+		if (_seats.length < _capacity && !_occupied)
 		{
 			_seats.insert(0, id);
-			_occupied = true;
-			return true;
+			foo = true;
 		}
-		else
+		if (_seats.length == _capacity)
 		{
-			return false;
+			_occupied = true;
+			foo = false;
 		}
+		return foo;
 	}
 	
 	/**
@@ -49,11 +55,19 @@ class Seats
 		return _seats.pop();
 	}
 	
+	/**
+	 *  returns capacity
+	 * @return returns capacity of the seatings
+	 */
 	public function getCapacity():Int
 	{
 		return _capacity;
 	}
 	
+	/**
+	 * Sets the capacity.
+	 * @param	cap Capacity of the seats, how many people it can hold
+	 */
 	public function setCapacity(cap:Int)
 	{
 		if (cap < 1)
@@ -62,5 +76,20 @@ class Seats
 			_capacity = 3;
 		else
 			_capacity = cap;
+	}
+	
+	public function toString():String
+	{
+		return "occupied " + _occupied + ", " + _seats[0] + _seats[1] + _seats[2];
+	}
+	
+	//getter setter für occupied
+	public function getOccupied():Bool
+	{
+		return _occupied;
+	}
+	public function setOccupied(oc:Bool)
+	{
+		_occupied = oc;
 	}
 }

@@ -16,7 +16,7 @@ import com.haxepunk.utils.Key;
 
 class PlayerObj extends Entity
 {
-	private var sprite:Spritemap;
+	//properties
 	private var _rotation : Float;
 	private var _rotationSpd : Int;
 	private var _maxRotationSpd : Int;
@@ -25,21 +25,29 @@ class PlayerObj extends Entity
 	private var _acceleration : Float;
 	private var _breaks : Float;
 	private var _backGear : Bool;
+	
+	//misc
+	private var sprite:Spritemap;
 	private var _lifes : Int;
 	private var _startPos : Array<Float>;
+	private var seats : Seats;
 	
-	//modifyer
+	//modifier
 	public static var _honks : Bool;
 	
 	//sounds
 	private var _sfxHonk : Sfx;
 	
+	//to add Human to Seat
+	public static var idAdding : Int = 0;
+	
 	public function new(x:Int, y:Int, _lifes:Int, ?_maxRotationSpd:Int, ?_maxVelocity:Float, ?_acceleration:Float, ?_breaks:Float)
 	{
 		super(x, y);
-		//create new spritemap
+		
+		//take care of sprite and animation
 		sprite = new Spritemap("gfx/car_animation.png", 12, 17);
-		//define animations
+		setHitbox(12 * 3, 17 * 3, 0, 0);
 		sprite.add("idle", [0]);
 		sprite.add("right", [1]);
 		sprite.add("left", [2]);
@@ -53,25 +61,29 @@ class PlayerObj extends Entity
 		_rotationSpd = 0;
 		this._lifes = _lifes;
 		
+		//set properties
 		this._maxRotationSpd = (_maxRotationSpd == null) ? 8 : _maxRotationSpd;
 		this._maxVelocity = (_maxVelocity == null) ? 15 : _maxVelocity;
 		this._acceleration = (_acceleration == null) ? 1.5 : _acceleration;
 		this._breaks = (_breaks == null) ? 1.0 : _breaks;
 		
+		//define input handling
 		Input.define("up", [Key.UP, Key.W]);
 		Input.define("left", [Key.LEFT, Key.A]);
 		Input.define("right", [Key.RIGHT, Key.D]);
 		Input.define("down", [Key.DOWN, Key.S]);
 		Input.define("honk", [Key.SPACE]);
 		
+		//modifiers
 		collidable = true;
 		visible = true;
 		type = "car";
 		name = "player";
 		_honks = false;
 		
-		setHitbox();
+		//misc
 		_startPos = [x, y];
+		seats = new Seats(3);
 		
 		//sfx
 		_sfxHonk = new Sfx("sfx/honk.wav", function() { _honks = false; } );
@@ -81,7 +93,71 @@ class PlayerObj extends Entity
 	{	
 		checkBackGear();
 		regulateRotationSpd();
+		movement();
 		
+		/*
+		 * If human wants to be added to the car, the idAdding changes
+		 */
+		if (idAdding > 0) {
+			seats.add(idAdding);
+			if (seats.getOccupied())
+			{
+				idAdding = -1;
+			} else
+				idAdding = 0;
+		}
+		
+		trace(seats.toString());
+		
+		//honking. only "works" when seats are not full
+		if (Input.check("honk"))
+		{
+			honk();
+			if (!seats.getOccupied())
+				_honks = true;
+		}
+		
+		velocity();
+		
+		//apply rotation
+		sprite.angle = _rotation;
+		
+		//set camera
+		HXP.camera.x = (HXP.camera.x + (x - HXP.halfWidth)) * 0.5;
+		HXP.camera.y = (HXP.camera.y + (y - HXP.halfHeight)) * 0.5;
+		normalizeCamera();
+		
+		super.update();
+	}
+	
+	/**
+	 * reduces life.
+	 * sets back velocity, rotation, and position.
+	 */
+	public function death()
+	{
+		setLifes(getLifes() - 1);
+		_velocity = 0;
+		_rotation = 0;
+		x = _startPos[0];
+		y = _startPos[1];
+	}
+	
+	/**
+	 * Plays the honking sound. Sets _honks to true.
+	 * Attracts people into taxi.
+	 */
+	public function honk()
+	{
+		if (!_sfxHonk.playing)
+			_sfxHonk.play();
+	}
+	
+	/**
+	 * Handles all the movement of the car
+	 */
+	public function movement()
+	{
 		if (Input.check("left"))                                    
 		{
 			sprite.play("left", false);
@@ -122,48 +198,6 @@ class PlayerObj extends Entity
 					_velocity = 0;
 			}
 		}
-		
-		//honking
-		if (Input.check("honk"))
-		{
-			honk();
-			_honks = true;
-		}
-		
-		velocity();
-		
-		//apply rotation
-		sprite.angle = _rotation;
-		
-		//set camera
-		HXP.camera.x = (HXP.camera.x + (x - HXP.halfWidth)) * 0.5;
-		HXP.camera.y = (HXP.camera.y + (y - HXP.halfHeight)) * 0.5;
-		normalizeCamera();
-		
-		super.update();
-	}
-	
-	/**
-	 * reduces life.
-	 * sets back velocity, rotation, and position.
-	 */
-	public function death()
-	{
-		setLifes(getLifes() - 1);
-		_velocity = 0;
-		_rotation = 0;
-		x = _startPos[0];
-		y = _startPos[1];
-	}
-	
-	/**
-	 * Plays the honking sound. Sets _honks to true.
-	 * Attracts people into taxi.
-	 */
-	public function honk()
-	{
-		if (!_sfxHonk.playing)
-			_sfxHonk.play();
 	}
 	
 	public override function moveCollideX(e:Entity) : Bool
@@ -184,7 +218,7 @@ class PlayerObj extends Entity
 	public function velocity()
 	{
 		var _radians:Float = toRadians(sprite.angle);
-	 	moveBy( -Math.sin(_radians) * _velocity, -Math.cos(_radians) * _velocity, ["lava"]);
+	 	moveBy( -Math.sin(_radians) * _velocity, -Math.cos(_radians) * _velocity, ["lava","human"]);
 	}
 	
 	public inline static function toRadians(deg:Float):Float
