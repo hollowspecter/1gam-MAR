@@ -67,6 +67,11 @@ class GameWorld extends com.haxepunk.World
 				{
 					add(new Human(obj.x, obj.y));
 				}
+				
+				if (obj.type == "destination")
+				{
+					add(new Destination(obj.x, obj.y));
+				}
 			}
 		}
 	}
