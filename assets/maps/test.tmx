@@ -28,5 +28,8 @@
   <object type="spawn" gid="13" x="237" y="355"/>
   <object type="spawn" gid="13" x="468" y="305"/>
   <object type="spawn" gid="13" x="660" y="499"/>
+  <object type="destination" gid="14" x="593" y="90"/>
+  <object type="destination" gid="14" x="584" y="673"/>
+  <object type="destination" gid="14" x="50" y="359"/>
  </objectgroup>
 </map>

@@ -24,6 +24,19 @@ class Seats
 	}
 	
 	/**
+	 * Returns you the ID of the human which waits the longest right now!
+	 * @return Returns 0 when noone sits in the car
+	 */
+	public function getCurrentID():Int
+	{
+		//check if someone sits in the car
+		if (_seats.length == 0)
+			return 0;
+		
+		return _seats[_seats.length-1];
+	}
+	
+	/**
 	 * Adds the id of the human who will occupy the seat
 	 * @param	id is id of the human who will occupy the seat
 	 * @return	returns false when all seats are occupied!

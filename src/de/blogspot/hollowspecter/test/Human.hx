@@ -16,7 +16,7 @@ import com.haxepunk.utils.Key;
  */
 class Human extends Entity
 {
-	private static var id:Int = 1;
+	public static var id:Int = 1;
 	private var _id:Int;
 	private var _rotation:Float;
 	private var _allowedDistance:Int;
@@ -25,13 +25,16 @@ class Human extends Entity
 	private var _saying:Text;
 	private var _personCount:Int;
 	
+	//mission
+	private var destinationId:Int;
+	
 	//modifier
 	private var _gotHonkedAt:Bool;
 	
 	//modes
 	//if 0 then it has not entered a car yet
 	//if 1 then it is IN the car
-	//if 2 it has left the car
+	//if 2 it is leaving
 	private var mode:Int;
 	
 	public function new(x:Float, y:Float)
@@ -45,12 +48,14 @@ class Human extends Entity
 		mode = 0;
 		visible = true;
 		collidable = true;
+		destinationId = 0;
 		
 		//modifier
 		_gotHonkedAt = false;
 		
 		//copy id, then increment static id
 		_id = id;
+		name = "human" + id;
 		id++;
 		
 		//shuffle through all the 16 different people and store in _personCount
@@ -79,20 +84,29 @@ class Human extends Entity
 		_saying.visible = false;
 		HXP.world.addGraphic(_saying);
 		
-		setHitbox(9*3,6*3,0,0);
-		
-		//input handling can be taken out when tests are over
+		setHitbox(9 * 3, 6 * 3, 0, 0);
 		Input.define("speak", [Key.T]);
 	}
 	
 	public override function update()
 	{
+		if (destinationId == 0)
+		{
+			destinationId = chooseDest();
+		}
+		trace (destinationId);
+		
 		if (carIsInReach() && _gotHonkedAt && mode == 0)
 		{
 			//rotate towards car and move!
 			rotateTowards(HXP.world.getInstance("player").x, HXP.world.getInstance("player").y);
 			_bodies.angle = _rotation;
 			moveForward(3);
+		}
+		
+		if (mode == 2)
+		{
+			moveForward(2);
 		}
 		
 		//speaking
@@ -110,6 +124,20 @@ class Human extends Entity
 		
 		super.update();
 	}
+
+	/**
+	 * Shuffles randomly through all the destinations and chooses one
+	 * @return returns the id of the destination chosen
+	 */
+	public function chooseDest():Int
+	{
+		var n:Int = 0;
+		while (n == 0)
+		{
+			n = Std.random(Destination.destCounter);
+		}
+		return n;
+	}
 	
 	/**
 	 * Basically the Human going into the car. Turns human invisible, uncollidable, and
@@ -125,6 +153,11 @@ class Human extends Entity
 			visible = false;
 			collidable = false;
 			PlayerObj.idAdding = _id;
+			mode = 1;
+		}
+		if (e.type == "lava" && mode == 2)
+		{
+			HXP.world.remove(this);
 		}
 		return super.moveCollideX(e);
 	}
@@ -134,6 +167,7 @@ class Human extends Entity
 		moveCollideX(e);
 		return super.moveCollideY(e);
 	}
+	
 	
 	public function speak(text:String)
 	{
@@ -172,7 +206,7 @@ class Human extends Entity
 	public function moveForward(velocity:Float)
 	{
 		var _radians:Float = PlayerObj.toRadians(_bodies.angle);
-		moveBy( Math.sin(_radians) * velocity, Math.cos(_radians) * velocity, ["car"]);
+		moveBy( Math.sin(_radians) * velocity, Math.cos(_radians) * velocity, ["car","lava"]);
 	}
 	
 	public function normalizeRotation(r:Int):Int
@@ -182,5 +216,36 @@ class Human extends Entity
 			r -= 360;
 		}
 		return r;
+	}
+		
+	/**
+	 * Makes the human leave the car. Making it visible, placing it close to the car
+	 * then turning it to one of the directions and letting him wlak into lava.
+	 * when he collides with the lava, he shall be rmoved from the world!
+	 * @param	direction the direction u want the human to go "left","right","up","down"
+	 */
+	public function leaveCar(direction:String)
+	{
+		//toggle direction
+		if (direction == "rechts")
+			_rotation = -90;
+		if (direction == "down")
+			_rotation = 0;
+		if (direction == "left")
+			_rotation = 90;
+		if (direction == "up")
+			_rotation = 180;
+		visible = true;
+		collidable = true;
+		mode = 2;
+	}
+	
+	/**
+	 * Gives you the ID of the Destination of this Human
+	 * @return returns destination id. if its 0, it has not yet chosen a destination (unlikely)
+	 */
+	public function getDestID():Int
+	{
+		return destinationId;
 	}
 }

@@ -97,7 +97,6 @@ class PlayerObj extends Entity
 		movement();
 		
 		//If human wants to be added to the car, the idAdding changes
-		
 		if (idAdding > 0) {
 			seats.add(idAdding);
 			if (seats.getOccupied())
@@ -107,7 +106,7 @@ class PlayerObj extends Entity
 				idAdding = 0;
 		}
 		
-		trace(seats.toString());
+		//trace(seats.toString());
 		
 		//honking. only "works" when seats are not full
 		if (Input.check("honk"))
@@ -116,6 +115,15 @@ class PlayerObj extends Entity
 			if (!seats.getOccupied())
 				_honks = true;
 		}
+		
+		//if 1 seat is taken, activate that humans destination
+		if (seats.getCurrentID() != 0)
+		{
+			var h:Human = GameWorld.getHuman(seats.getCurrentID());
+			var dID:Int = h.getDestID();
+			Destination.activate(dID);
+		}
+		
 		
 		velocity();
 		
@@ -206,6 +214,10 @@ class PlayerObj extends Entity
 		{
 			death();
 		}
+		if (e.type == "destination")
+		{
+			return false;
+		}
 		return super.moveCollideX(e);
 	}
 	
@@ -218,7 +230,7 @@ class PlayerObj extends Entity
 	public function velocity()
 	{
 		var _radians:Float = toRadians(sprite.angle);
-	 	moveBy( -Math.sin(_radians) * _velocity, -Math.cos(_radians) * _velocity, ["lava","human"]);
+	 	moveBy( -Math.sin(_radians) * _velocity, -Math.cos(_radians) * _velocity, ["lava","human","destination"]);
 	}
 	
 	public inline static function toRadians(deg:Float):Float
