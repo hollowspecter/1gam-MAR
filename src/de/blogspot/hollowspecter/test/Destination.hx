@@ -18,13 +18,16 @@ class Destination extends Entity
 	public static var destCounter:Int = 0;
 	private var _id:Int;
 	
-	public function new(x:Int, y:Int) 
+	//direction of with the passenger should move when leaving the car there
+	private var _direction:String;
+	
+	public function new(x:Int, y:Int, ?direction:String) 
 	{
 		super(x, y);
 		
 		//misc
 		type = "destination";
-		collidable = true;
+		collidable = false;
 		visible = false;
 		
 		//id setting
@@ -32,6 +35,12 @@ class Destination extends Entity
 		name = "destination"+id;
 		id++;
 		destCounter++;
+		
+		//dealing with the direction
+		if (direction == "left" || direction == "right" || direction == "up" || direction == "down")
+			_direction = direction;
+		else
+			_direction = "down";
 		
 		//graphic
 		sprite = new Spritemap("gfx/destination.png", 51, 51);
@@ -92,5 +101,10 @@ class Destination extends Entity
 		var y_:Float = e.y;
 		
 		return [x_, y_];
+	}
+	
+	public function getDirection():String
+	{
+		return _direction;
 	}
 }

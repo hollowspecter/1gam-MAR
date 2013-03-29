@@ -59,7 +59,7 @@ class Seats
 	
 	/**
 	 * Removes in a fifo way the passenger who waited the longest.
-	 * @return
+	 * @return returns the one popped out!
 	 */
 	public function remove():Int
 	{

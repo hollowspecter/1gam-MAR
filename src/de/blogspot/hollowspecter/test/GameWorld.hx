@@ -95,7 +95,8 @@ class GameWorld extends com.haxepunk.World
 			{
 				if (obj.type == "destination")
 				{
-					var d:Destination = new Destination(obj.x, obj.y);
+					var dir:String = obj.custom.resolve("direction");
+					var d:Destination = new Destination(obj.x, obj.y, dir);
 					add(d);
 					destinations.push(d);
 				}

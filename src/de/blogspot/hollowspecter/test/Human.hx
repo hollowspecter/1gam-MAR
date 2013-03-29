@@ -94,19 +94,18 @@ class Human extends Entity
 		{
 			destinationId = chooseDest();
 		}
-		trace (destinationId);
 		
 		if (carIsInReach() && _gotHonkedAt && mode == 0)
 		{
 			//rotate towards car and move!
 			rotateTowards(HXP.world.getInstance("player").x, HXP.world.getInstance("player").y);
 			_bodies.angle = _rotation;
-			moveForward(3);
+			moveForward(3, ["car"]);
 		}
 		
 		if (mode == 2)
 		{
-			moveForward(2);
+			moveForward(2, ["lava"]);
 		}
 		
 		//speaking
@@ -148,7 +147,7 @@ class Human extends Entity
 	 */
 	public override function moveCollideX(e:Entity) : Bool
 	{
-		if (e.type == "car" && PlayerObj.idAdding >= 0)
+		if (e.type == "car" && PlayerObj.idAdding >= 0 && mode == 0)
 		{
 			visible = false;
 			collidable = false;
@@ -203,10 +202,10 @@ class Human extends Entity
 		_rotation = PlayerObj.toDegrees(_rotation) + 90;
 	}
 	 
-	public function moveForward(velocity:Float)
+	public function moveForward(velocity:Float, types:Array<String>)
 	{
 		var _radians:Float = PlayerObj.toRadians(_bodies.angle);
-		moveBy( Math.sin(_radians) * velocity, Math.cos(_radians) * velocity, ["car","lava"]);
+		moveBy( Math.sin(_radians) * velocity, Math.cos(_radians) * velocity, types);
 	}
 	
 	public function normalizeRotation(r:Int):Int
@@ -227,17 +226,20 @@ class Human extends Entity
 	public function leaveCar(direction:String)
 	{
 		//toggle direction
-		if (direction == "rechts")
-			_rotation = -90;
-		if (direction == "down")
-			_rotation = 0;
-		if (direction == "left")
-			_rotation = 90;
-		if (direction == "up")
-			_rotation = 180;
+		//if (direction == "rechts")
+			//_bodies.angle = -90;
+		//if (direction == "down")
+			//_bodies.angle = 0;
+		//if (direction == "left")
+			//_bodies.angle = 90;
+		//if (direction == "up")
+			//_bodies.angle = 180;
 		visible = true;
 		collidable = true;
 		mode = 2;
+		var e:Entity = HXP.world.getInstance("player");
+		this.x = e.x;
+		this.y = e.y;
 	}
 	
 	/**

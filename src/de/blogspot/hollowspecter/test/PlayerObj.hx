@@ -106,7 +106,7 @@ class PlayerObj extends Entity
 				idAdding = 0;
 		}
 		
-		//trace(seats.toString());
+		trace(seats.toString());
 		
 		//honking. only "works" when seats are not full
 		if (Input.check("honk"))
@@ -123,7 +123,6 @@ class PlayerObj extends Entity
 			var dID:Int = h.getDestID();
 			Destination.activate(dID);
 		}
-		
 		
 		velocity();
 		
@@ -216,6 +215,15 @@ class PlayerObj extends Entity
 		}
 		if (e.type == "destination")
 		{
+			//only when car halts
+			if (_velocity < 5)
+			{
+				var h:Human = GameWorld.getHuman(seats.remove());
+				var dID:Int = h.getDestID();
+				var d:Destination = GameWorld.getDestination(dID);
+				Destination.deactivate(dID);
+				h.leaveCar(d.getDirection());
+			}
 			return false;
 		}
 		return super.moveCollideX(e);
@@ -230,7 +238,7 @@ class PlayerObj extends Entity
 	public function velocity()
 	{
 		var _radians:Float = toRadians(sprite.angle);
-	 	moveBy( -Math.sin(_radians) * _velocity, -Math.cos(_radians) * _velocity, ["lava","human","destination"]);
+	 	moveBy( -Math.sin(_radians) * _velocity, -Math.cos(_radians) * _velocity, ["lava","destination"]);
 	}
 	
 	public inline static function toRadians(deg:Float):Float
