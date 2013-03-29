@@ -39,7 +39,7 @@ class PlayerObj extends Entity
 	private var _sfxHonk : Sfx;
 	
 	//to add Human to Seat
-	public static var idAdding : Int = 0;
+	public static var idAdding : Int;
 	
 	public function new(x:Int, y:Int, _lifes:Int, ?_maxRotationSpd:Int, ?_maxVelocity:Float, ?_acceleration:Float, ?_breaks:Float)
 	{
@@ -47,7 +47,7 @@ class PlayerObj extends Entity
 		
 		//take care of sprite and animation
 		sprite = new Spritemap("gfx/car_animation.png", 12, 17);
-		setHitbox(12 * 3, 17 * 3, 0, 0);
+		setHitbox(12 * 3, 17 * 3, 18, 38);
 		sprite.add("idle", [0]);
 		sprite.add("right", [1]);
 		sprite.add("left", [2]);
@@ -84,6 +84,7 @@ class PlayerObj extends Entity
 		//misc
 		_startPos = [x, y];
 		seats = new Seats(3);
+		idAdding = 0;
 		
 		//sfx
 		_sfxHonk = new Sfx("sfx/honk.wav", function() { _honks = false; } );
@@ -95,9 +96,8 @@ class PlayerObj extends Entity
 		regulateRotationSpd();
 		movement();
 		
-		/*
-		 * If human wants to be added to the car, the idAdding changes
-		 */
+		//If human wants to be added to the car, the idAdding changes
+		
 		if (idAdding > 0) {
 			seats.add(idAdding);
 			if (seats.getOccupied())
