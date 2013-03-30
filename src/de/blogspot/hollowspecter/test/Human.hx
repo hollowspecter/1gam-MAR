@@ -17,6 +17,10 @@ import com.haxepunk.utils.Key;
 class Human extends Entity
 {
 	public static var id:Int = 1;
+	
+	//destination chosen from the human before
+	private static var destBefore:Int = 0;
+	
 	private var _id:Int;
 	private var _rotation:Float;
 	private var _allowedDistance:Int;
@@ -125,16 +129,21 @@ class Human extends Entity
 	}
 
 	/**
-	 * Shuffles randomly through all the destinations and chooses one
+	 * Shuffles randomly through all the destinations and chooses one.
+	 * Makes sure that no passeger chooses the same destination as the passenger before
 	 * @return returns the id of the destination chosen
 	 */
 	public function chooseDest():Int
 	{
 		var n:Int = 0;
-		while (n == 0)
+		
+		do
 		{
 			n = Std.random(Destination.destCounter);
-		}
+			n++;
+		} while (n == destBefore);
+		
+		destBefore = n;
 		return n;
 	}
 	
@@ -221,19 +230,10 @@ class Human extends Entity
 	 * Makes the human leave the car. Making it visible, placing it close to the car
 	 * then turning it to one of the directions and letting him wlak into lava.
 	 * when he collides with the lava, he shall be rmoved from the world!
-	 * @param	direction the direction u want the human to go "left","right","up","down"
+	 * @param	direction just to whatever, doesnt matter anymore
 	 */
 	public function leaveCar(direction:String)
 	{
-		//toggle direction
-		//if (direction == "rechts")
-			//_bodies.angle = -90;
-		//if (direction == "down")
-			//_bodies.angle = 0;
-		//if (direction == "left")
-			//_bodies.angle = 90;
-		//if (direction == "up")
-			//_bodies.angle = 180;
 		visible = true;
 		collidable = true;
 		mode = 2;
