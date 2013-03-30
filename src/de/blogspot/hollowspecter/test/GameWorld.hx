@@ -116,7 +116,7 @@ class GameWorld extends com.haxepunk.World
 	 */
 	public function HUD()
 	{
-		lifeCounter = new Text(player.getLifes()+" x lifes");
+		lifeCounter = new Text(player.getLifes()+" x lives");
 		lifeCounter.color = 0xFFFFFF;
 		lifeCounter.size = 32;
 		lifeCounter.x = 10;

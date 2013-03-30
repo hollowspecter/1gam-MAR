@@ -31,6 +31,7 @@ class PlayerObj extends Entity
 	private var _lifes : Int;
 	private var _startPos : Array<Float>;
 	private var seats : Seats;
+	private var disablingInput : Bool;
 	
 	//modifier
 	public static var _honks : Bool;
@@ -85,6 +86,7 @@ class PlayerObj extends Entity
 		_startPos = [x, y];
 		seats = new Seats(3);
 		idAdding = 0;
+		disablingInput = false;
 		
 		//sfx
 		_sfxHonk = new Sfx("sfx/honk.wav", function() { _honks = false; } );
@@ -117,11 +119,24 @@ class PlayerObj extends Entity
 		}
 		
 		//if 1 seat is taken, activate that humans destination
-		if (seats.getCurrentID() != 0)
+		if (seats.getCurrentID() != 0 && !disablingInput)
 		{
 			var h:Human = GameWorld.getHuman(seats.getCurrentID());
 			var dID:Int = h.getDestID();
 			Destination.activate(dID);
+		}
+		
+		//when you hit destination, the input will be disabled, u get slower. then kick out the passenger
+		if (disablingInput && _velocity < 4)
+		{
+			var h:Human = GameWorld.getHuman(seats.remove());
+			h.leaveCar("left");
+			disablingInput = false;
+		} if (disablingInput)
+		{
+			if (_velocity > 0) {
+				_velocity -= 1;
+			}
 		}
 		
 		velocity();
@@ -181,16 +196,20 @@ class PlayerObj extends Entity
 		} else if (!Input.check("left")) sprite.play("idle", false);
 		
 		//Starts car up. car sound starts playing then
-		if (Input.check("up"))
+		if (!disablingInput)
 		{
-			if (_velocity < _maxVelocity)
-				_velocity += 0.5;
-		} else if (Input.check("down"))
-		{			
-			if (_velocity > -5) {
-				_velocity -= 0.5;
+			if (Input.check("up"))
+			{
+				if (_velocity < _maxVelocity)
+					_velocity += 0.5;
+			} else if (Input.check("down"))
+			{			
+				if (_velocity > -5) {
+					_velocity -= 0.5;
+					}
 			}
 		}
+		
 		
 		//when car doesnt accelerate: car slows down slowly
 		if (_velocity != 0 && !Input.check("up"))
@@ -215,15 +234,10 @@ class PlayerObj extends Entity
 		}
 		if (e.type == "destination")
 		{
-			//only when car halts
-			if (_velocity < 5)
-			{
-				var h:Human = GameWorld.getHuman(seats.remove());
-				var dID:Int = h.getDestID();
-				var d:Destination = GameWorld.getDestination(dID);
-				Destination.deactivate(dID);
-				h.leaveCar(d.getDirection());
-			}
+			disablingInput = true;
+			var h:Human = GameWorld.getHuman(seats.getCurrentID());
+			var dID:Int = h.getDestID();
+			Destination.deactivate(dID);
 			return false;
 		}
 		return super.moveCollideX(e);
