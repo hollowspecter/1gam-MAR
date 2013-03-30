@@ -107,4 +107,9 @@ class Destination extends Entity
 	{
 		return _direction;
 	}
+	
+	public function getID():Int
+	{
+		return _id;
+	}
 }

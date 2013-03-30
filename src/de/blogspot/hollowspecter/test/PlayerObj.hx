@@ -42,6 +42,13 @@ class PlayerObj extends Entity
 	//to add Human to Seat
 	public static var idAdding : Int;
 	
+	//the compass
+	private var _compass : Compass;
+	
+	//cam
+	public static var camX : Float;
+	public static var camY : Float;
+	
 	public function new(x:Int, y:Int, _lifes:Int, ?_maxRotationSpd:Int, ?_maxVelocity:Float, ?_acceleration:Float, ?_breaks:Float)
 	{
 		super(x, y);
@@ -88,12 +95,16 @@ class PlayerObj extends Entity
 		idAdding = 0;
 		disablingInput = false;
 		
+		//compass
+		_compass = new Compass(200, 200);
+		
 		//sfx
 		_sfxHonk = new Sfx("sfx/honk.wav", function() { _honks = false; } );
 	}
 	
 	public override function update()
 	{	
+		
 		checkBackGear();
 		regulateRotationSpd();
 		movement();
@@ -108,8 +119,6 @@ class PlayerObj extends Entity
 				idAdding = 0;
 		}
 		
-		trace(seats.toString());
-		
 		//honking. only "works" when seats are not full
 		if (Input.check("honk"))
 		{
@@ -119,11 +128,14 @@ class PlayerObj extends Entity
 		}
 		
 		//if 1 seat is taken, activate that humans destination
+		//also activate compasses arrow
 		if (seats.getCurrentID() != 0 && !disablingInput)
 		{
-			var h:Human = GameWorld.getHuman(seats.getCurrentID());
-			var dID:Int = h.getDestID();
-			Destination.activate(dID);
+			var d:Destination = getCurrentDestination();
+			Destination.activate(d.getID());
+			var rot:Float =  getRotationTowards(d.x, d.y);
+			_compass.updateRotation(rot);
+			_compass.activate();
 		}
 		
 		//when you hit destination, the input will be disabled, u get slower. then kick out the passenger
@@ -145,8 +157,10 @@ class PlayerObj extends Entity
 		sprite.angle = _rotation;
 		
 		//set camera
-		HXP.camera.x = (HXP.camera.x + (x - HXP.halfWidth)) * 0.5;
-		HXP.camera.y = (HXP.camera.y + (y - HXP.halfHeight)) * 0.5;
+		HXP.camera.x = x - HXP.halfWidth;
+		HXP.camera.y = y - HXP.halfHeight;
+		//HXP.camera.x = (HXP.camera.x + (x - HXP.halfWidth)) * 0.5;
+		//HXP.camera.y = (HXP.camera.y + (y - HXP.halfHeight)) * 0.5;
 		normalizeCamera();
 		
 		super.update();
@@ -238,6 +252,7 @@ class PlayerObj extends Entity
 			var h:Human = GameWorld.getHuman(seats.getCurrentID());
 			var dID:Int = h.getDestID();
 			Destination.deactivate(dID);
+			_compass.deactivate();
 			return false;
 		}
 		return super.moveCollideX(e);
@@ -327,6 +342,46 @@ class PlayerObj extends Entity
 		return _normalized;
 	}
 	
+	/**
+	 * Returns distance to the active destination
+	 * @return returns 0 when no destination active
+	 */
+	public function getDistanceToDestination():Float
+	{
+		if (seats.getCurrentID() != 0)
+		{
+			return distanceFrom(getCurrentDestination());
+		}
+		else
+			return 0;
+	}
+	
+	/**
+	 * 
+	 * @return Returns the destination of the current passenger
+	 */
+	public function getCurrentDestination():Destination
+	{
+		var h:Human = GameWorld.getHuman(seats.getCurrentID());
+		var dID:Int = h.getDestID();
+		return GameWorld.getDestination(dID);
+	}
+	
+	/**
+	* Put in the coordinates of an object. Function gives you the rotation towards this object
+	* @param	x x-coordinate of the object
+	* @param	y y-coordinate of this object
+	* @return the rotation towards this object in float
+	*/
+	public function getRotationTowards(x:Float, y:Float):Float
+	{
+		var _dx = x - this.x;
+		var _dy = y - this.y;
+		var rot = -Math.atan2(_dy, _dx);
+		rot = PlayerObj.toDegrees(rot) -90;
+		return rot;
+	}
+	
 	//lifes getter and setter
 	public function getLifes():Int
 	{
@@ -341,5 +396,10 @@ class PlayerObj extends Entity
 	public static function getHonks():Bool
 	{
 		return _honks;
+	}
+	
+	public function getCompass():Compass
+	{
+		return _compass;
 	}
 }

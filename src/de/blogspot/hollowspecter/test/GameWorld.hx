@@ -17,8 +17,7 @@ class GameWorld extends com.haxepunk.World
 	public static var kMaxWidth:Int;
 	public static var kMaxHeight:Int;
 	public var player:PlayerObj;
-	public var lifeCounter:Text;
-	
+	public var lifeCounter:Text;	
 	
 	public function new()
 	{
@@ -39,6 +38,7 @@ class GameWorld extends com.haxepunk.World
 		loadLevel();
 		add(player);
 		HUD();
+		add(player.getCompass());
 		
 		//Input.define("activate", [Key.U]);
 		//Input.define("deactivate", [Key.I]);
@@ -116,6 +116,7 @@ class GameWorld extends com.haxepunk.World
 	 */
 	public function HUD()
 	{
+		//loading lifeCounter
 		lifeCounter = new Text(player.getLifes()+" x lives");
 		lifeCounter.color = 0xFFFFFF;
 		lifeCounter.size = 32;
@@ -131,8 +132,8 @@ class GameWorld extends com.haxepunk.World
 	public function updateHUD()
 	{
 		lifeCounter.text = player.getLifes() + " x lifes";
-		lifeCounter.x = HXP.camera.x + 10;
-		lifeCounter.y = HXP.camera.y + 10;
+		lifeCounter.x = HXP.world.camera.x + 10;
+		lifeCounter.y = HXP.world.camera.y + 10;
 	}
 	
 	/**

@@ -4,8 +4,10 @@ import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.graphics.Text;
 import com.haxepunk.HXP;
 import com.haxepunk.graphics.Image;
+import com.haxepunk.tweens.misc.Alarm;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
+import com.haxepunk.Tween.TweenType;
 
 /**
  * The Class of a Human. Each instance has its own human-id
@@ -34,6 +36,10 @@ class Human extends Entity
 	
 	//modifier
 	private var _gotHonkedAt:Bool;
+	
+	//camera position for the human
+	public static var camX:Float = 0;
+	public static var camY:Float = 0;
 	
 	//modes
 	//if 0 then it has not entered a car yet
@@ -118,12 +124,13 @@ class Human extends Entity
 		_faces.y = HXP.camera.y + 510;
 		_saying.x = HXP.camera.x + 120;
 		_saying.y = HXP.camera.y + 510;
+		
+		//saving the camera position in new vars
+		camX = HXP.camera.x;
+		camY = HXP.camera.y;
+		
 		if (Input.check("speak"))
-			speak("Luca is doof.\nVivi is cool!");
-		else {
-			_faces.visible = false;
-			_saying.visible = false;
-		}
+			speak("Luca is doof.\nVivi is cool!",2);
 		
 		super.update();
 	}
@@ -177,11 +184,18 @@ class Human extends Entity
 	}
 	
 	
-	public function speak(text:String)
+	public function speak(text:String, dur:Float)
 	{
 		_faces.visible = true;
 		_saying.visible = true;
 		_saying.text = text;
+		addTween(new Alarm(dur, function(o:Dynamic) { stopSpeak(); }, TweenType.OneShot), true);
+	}
+	
+	public function stopSpeak()
+	{
+		_faces.visible = false;
+		_saying.visible = false;
 	}
 	
 	//check if car is close-by
