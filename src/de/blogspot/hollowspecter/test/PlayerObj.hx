@@ -151,7 +151,7 @@ class PlayerObj extends Entity
 			}
 		}
 		
-		velocity();
+		velocity(["lava","destination","evilHuman"]);
 		
 		//apply rotation
 		sprite.angle = _rotation;
@@ -255,6 +255,12 @@ class PlayerObj extends Entity
 			_compass.deactivate();
 			return false;
 		}
+		if (e.type == "evilHuman")
+		{
+			var h:Human = cast(e, Human);
+			h.die();
+			return false;
+		}
 		return super.moveCollideX(e);
 	}
 	
@@ -264,10 +270,10 @@ class PlayerObj extends Entity
 		return super.moveCollideY(e);
 	}
 	
-	public function velocity()
+	public function velocity(solidType:Dynamic = null)
 	{
 		var _radians:Float = toRadians(sprite.angle);
-	 	moveBy( -Math.sin(_radians) * _velocity, -Math.cos(_radians) * _velocity, ["lava","destination"]);
+	 	moveBy( -Math.sin(_radians) * _velocity, -Math.cos(_radians) * _velocity, solidType);
 	}
 	
 	public inline static function toRadians(deg:Float):Float

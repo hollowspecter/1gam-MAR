@@ -8,6 +8,7 @@ import com.haxepunk.tweens.misc.Alarm;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 import com.haxepunk.Tween.TweenType;
+import nme.display.Sprite;
 
 /**
  * The Class of a Human. Each instance has its own human-id
@@ -31,6 +32,9 @@ class Human extends Entity
 	private var _saying:Text;
 	private var _personCount:Int;
 	
+	//blood animation
+	private var _blood:Spritemap;
+	
 	//mission
 	private var destinationId:Int;
 	
@@ -45,6 +49,7 @@ class Human extends Entity
 	//if 0 then it has not entered a car yet
 	//if 1 then it is IN the car
 	//if 2 it is leaving
+	//if 3 dead caused by car
 	private var mode:Int;
 	
 	public function new(x:Float, y:Float)
@@ -78,6 +83,13 @@ class Human extends Entity
 		_bodies.scale = 3;
 		_bodies.centerOrigin();
 		graphic = _bodies;
+		
+		//blood animation
+		_blood = new Spritemap("gfx/blood.png", 14, 16);
+		_blood.add("die", [0, 1, 2], 5, false);
+		_blood.scale = 3;
+		_blood.visible = true;
+		_blood.centerOrigin();
 		
 		//break down faces spritemap
 		//position and scale face image
@@ -244,13 +256,16 @@ class Human extends Entity
 	 * Makes the human leave the car. Making it visible, placing it close to the car
 	 * then turning it to one of the directions and letting him wlak into lava.
 	 * when he collides with the lava, he shall be rmoved from the world!
+	 * Edit: TYPE is changed here to "evilHuman" so they can get runover!
 	 * @param	direction just to whatever, doesnt matter anymore
 	 */
 	public function leaveCar(direction:String)
 	{
 		visible = true;
-		collidable = true;
+		collidable = false;
+		addTween(new Alarm(1.5, function(o:Dynamic) { collidable = true; }, TweenType.OneShot), true);
 		mode = 2;
+		type = "evilHuman";
 		var e:Entity = HXP.world.getInstance("player");
 		this.x = e.x;
 		this.y = e.y;
@@ -263,5 +278,14 @@ class Human extends Entity
 	public function getDestID():Int
 	{
 		return destinationId;
+	}
+	
+	public function die()
+	{
+		graphic = _blood;
+		mode = 3;
+		type = "deadHuman";
+		_blood.play("die", false);
+		addTween(new Alarm(5, function(o:Dynamic) {HXP.world.remove(this); }, TweenType.OneShot), true);
 	}
 }
