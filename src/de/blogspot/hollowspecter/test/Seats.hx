@@ -63,8 +63,7 @@ class Seats
 	 */
 	public function remove():Int
 	{
-		if (_seats.length == 1)
-			_occupied = false;
+		_occupied = false;
 		return _seats.pop();
 	}
 	

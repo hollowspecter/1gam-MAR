@@ -118,6 +118,7 @@ class PlayerObj extends Entity
 			} else
 				idAdding = 0;
 		}
+		trace("id adding: " + idAdding);
 		
 		//honking. only "works" when seats are not full
 		if (Input.check("honk"))
@@ -143,6 +144,7 @@ class PlayerObj extends Entity
 		{
 			var h:Human = GameWorld.getHuman(seats.remove());
 			h.leaveCar("left");
+			idAdding = 0;
 			disablingInput = false;
 		} if (disablingInput)
 		{

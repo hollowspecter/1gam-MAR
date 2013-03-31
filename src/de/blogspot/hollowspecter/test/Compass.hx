@@ -47,7 +47,6 @@ class Compass extends Entity
 		x = Human.camX + HXP.width - 75;
 		y = Human.camY + HXP.height - 75;
 		
-		trace(_active);
 		super.update();
 	}
 	

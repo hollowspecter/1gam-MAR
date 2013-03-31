@@ -181,7 +181,11 @@ class Human extends Entity
 			collidable = false;
 			PlayerObj.idAdding = _id;
 			mode = 1;
+		} else if (e.type == "car" && PlayerObj.idAdding == -1 && mode == 0)
+		{
+			_gotHonkedAt = false;
 		}
+		
 		if (e.type == "lava" && mode == 2)
 		{
 			HXP.world.remove(this);

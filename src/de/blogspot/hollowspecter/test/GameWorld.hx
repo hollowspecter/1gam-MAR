@@ -14,6 +14,7 @@ class GameWorld extends com.haxepunk.World
 {
 	public static var humans:Array<Human>;
 	public static var destinations:Array<Destination>;
+	public static var player_:PlayerObj;
 	public static var kMaxWidth:Int;
 	public static var kMaxHeight:Int;
 	public var player:PlayerObj;
@@ -24,6 +25,7 @@ class GameWorld extends com.haxepunk.World
 		super();
 		
 		player = new PlayerObj(500, 150, 3);
+		player_ = player;
 		humans = new Array<Human>();
 		destinations = new Array<Destination>();
 		
@@ -154,5 +156,10 @@ class GameWorld extends com.haxepunk.World
 	public static function getDestination(id:Int):Destination
 	{
 		return destinations[id - 1];
+	}
+	
+	public static function getPlayer():PlayerObj
+	{
+		return player_;
 	}
 }
