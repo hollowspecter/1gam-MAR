@@ -5,6 +5,7 @@ import com.haxepunk.utils.Key;
 import com.haxepunk.HXP;
 import com.haxepunk.World;
 import com.haxepunk.graphics.Text;
+import haxe.Timer;
 
 
 /**

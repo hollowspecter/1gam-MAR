@@ -141,8 +141,8 @@ class Human extends Entity
 		camX = HXP.camera.x;
 		camY = HXP.camera.y;
 		
-		if (Input.check("speak"))
-			speak("Luca is doof.\nVivi is cool!",2);
+		//if (Input.check("speak"))
+			//speak("Luca is doof.\nVivi is cool!",2);
 		
 		super.update();
 	}
@@ -181,6 +181,7 @@ class Human extends Entity
 			collidable = false;
 			PlayerObj.idAdding = _id;
 			mode = 1;
+			speak(Speech.destination[Std.random(Speech.destination.length)],2.5);
 		} else if (e.type == "car" && PlayerObj.idAdding == -1 && mode == 0)
 		{
 			_gotHonkedAt = false;

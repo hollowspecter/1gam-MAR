@@ -19,6 +19,7 @@ class GameWorld extends com.haxepunk.World
 	public static var kMaxHeight:Int;
 	public var player:PlayerObj;
 	public var lifeCounter:Text;	
+	public var timer:Text;
 	
 	public function new()
 	{
@@ -125,6 +126,14 @@ class GameWorld extends com.haxepunk.World
 		lifeCounter.x = 10;
 		lifeCounter.y = 10;
 		addGraphic(lifeCounter);
+		
+		//timer
+		timer = new Text(TimerManager.getInstance().getTime()+"");
+		timer.color = 0xFFFFFF;
+		timer.size = 32;
+		timer.x = 10;
+		timer.y = 40;
+		addGraphic(timer);
 	}
 	
 	/**
@@ -136,6 +145,10 @@ class GameWorld extends com.haxepunk.World
 		lifeCounter.text = player.getLifes() + " x lifes";
 		lifeCounter.x = HXP.world.camera.x + 10;
 		lifeCounter.y = HXP.world.camera.y + 10;
+		
+		timer.text = TimerManager.getInstance().getTime()+"";
+		timer.x = HXP.world.camera.x + 10;
+		timer.y = HXP.world.camera.y + 40;
 	}
 	
 	/**
