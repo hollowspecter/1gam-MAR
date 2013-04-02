@@ -27,9 +27,13 @@ class Human extends Entity
 	private var _id:Int;
 	private var _rotation:Float;
 	private var _allowedDistance:Int;
+	
+	//dealing with text
 	private var _faces:Spritemap;
 	private var _bodies:Spritemap;
 	private var _saying:Text;
+	private static var _speakQueue:Array<String>;
+	
 	private var _personCount:Int;
 	
 	//blood animation
@@ -106,6 +110,8 @@ class Human extends Entity
 		_saying.visible = false;
 		HXP.world.addGraphic(_saying);
 		
+		_speakQueue = new Array<String>();
+		
 		setHitbox(9 * 3, 6 * 3, 0, 0);
 		Input.define("speak", [Key.T]);
 	}
@@ -136,6 +142,9 @@ class Human extends Entity
 		_faces.y = HXP.camera.y + 510;
 		_saying.x = HXP.camera.x + 120;
 		_saying.y = HXP.camera.y + 510;
+		
+		//enabling talking feature
+		talking();
 		
 		//saving the camera position in new vars
 		camX = HXP.camera.x;
@@ -181,7 +190,10 @@ class Human extends Entity
 			collidable = false;
 			PlayerObj.idAdding = _id;
 			mode = 1;
-			speak(Speech.destination[Std.random(Speech.destination.length)],2.5);
+			
+			//add text to the speak queue to prevent multiple texts to appear!
+			_speakQueue.insert(0, Speech.destination[Std.random(Speech.destination.length)]);
+			
 		} else if (e.type == "car" && PlayerObj.idAdding == -1 && mode == 0)
 		{
 			_gotHonkedAt = false;
@@ -194,13 +206,27 @@ class Human extends Entity
 		return super.moveCollideX(e);
 	}
 	
+	/**
+	 * Deals with the text queue, fifo, the oldest text is being printed to the screen
+	 */
+	public function talking()
+	{
+		if (_speakQueue.length != 0)
+		{
+			_faces.visible = true;
+			_saying.visible = true;
+			_saying.text = _speakQueue.pop();
+			addTween(new Alarm(2.5, function(o:Dynamic) { stopSpeak(); }, TweenType.OneShot), true);
+		}
+	}
+	
 	public override function moveCollideY(e:Entity) : Bool
 	{
 		moveCollideX(e);
 		return super.moveCollideY(e);
 	}
 	
-	
+	//not used anymore
 	public function speak(text:String, dur:Float)
 	{
 		_faces.visible = true;

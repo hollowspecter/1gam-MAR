@@ -68,6 +68,15 @@ class TimerManager extends Timer
 		return t;
 	}
 	
+	/**
+	 * 
+	 * @return returns current stopwatch-time!
+	 */
+	public function getStopWatch():Int
+	{
+		return _stopWatchTime;
+	}
+	
 	/*
 	 * Getter and setter
 	 */

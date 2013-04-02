@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="40" height="30" tilewidth="24" tileheight="24">
  <tileset firstgid="1" name="first" tilewidth="24" tileheight="24">
-  <image source="../gfx/tileset_scaled.png" trans="ff9a26" width="96" height="72"/>
+  <image source="../gfx/tileset_scaled.png" trans="ff9a26" width="96" height="120"/>
  </tileset>
- <tileset firstgid="13" name="spawntiles" tilewidth="24" tileheight="24">
+ <tileset firstgid="21" name="spawntiles" tilewidth="24" tileheight="24">
   <image source="../gfx/spawntiles.png" trans="ff9a26" width="48" height="24"/>
  </tileset>
  <layer name="lava" width="40" height="30">
@@ -13,36 +13,36 @@
  </layer>
  <layer name="street" width="40" height="30">
   <data encoding="base64" compression="zlib">
-   eJzt1ksKwCAMRVGrFn/732/bQcGJEiGCkPvggqNwhjpnZ+ktduXB++vGhw8fvgN8Vam24CuCe//ipmY+Sfjw4cNn3eeVCgu+S3BPe1b/B/jw4cN3um/HHv7PC00=
+   eJzt1ksKwCAMBFD7o/YL9f6Hrctuqk5IscEJDLhRHgqDzrUzR8xamLOCb44ZCzPRl/X5lzV99FnyIb2Vygb4lsxZz35EegFJyof0jyXfrhgv2GP9/v7u03xfyVtbvz/6cN8V0ytkAHxd5qzg9KfV/wF99El8pf1Bnw0f0vNf9G+NuQH9Og2V
   </data>
  </layer>
- <layer name="collision" width="40" height="30">
+ <layer name="collision" width="40" height="30" visible="0">
   <data encoding="base64" compression="zlib">
    eJztlrENACAMw5j4/2RegDpFSNhSxyqe0o6RYRbnFpUs/ViWfixLP5a1s1PtrUSXvdaRp+jH0I+hH0M/hn6M5O3tur8pfv2vUujH0I+hH6Or0xdOcgMx
   </data>
  </layer>
- <objectgroup name="points" width="40" height="30">
-  <object type="spawn" gid="13" x="63" y="265"/>
-  <object type="destination" gid="14" x="860" y="363">
+ <objectgroup name="points" width="40" height="30" visible="0">
+  <object type="spawn" gid="21" x="63" y="265"/>
+  <object type="destination" gid="22" x="860" y="363">
    <properties>
     <property name="direction" value="right"/>
    </properties>
   </object>
-  <object type="spawn" gid="13" x="63" y="265"/>
-  <object type="spawn" gid="13" x="237" y="355"/>
-  <object type="spawn" gid="13" x="468" y="305"/>
-  <object type="spawn" gid="13" x="660" y="499"/>
-  <object type="destination" gid="14" x="593" y="90">
+  <object type="spawn" gid="21" x="63" y="265"/>
+  <object type="spawn" gid="21" x="237" y="355"/>
+  <object type="spawn" gid="21" x="468" y="305"/>
+  <object type="spawn" gid="21" x="660" y="499"/>
+  <object type="destination" gid="22" x="593" y="90">
    <properties>
     <property name="direction" value="up"/>
    </properties>
   </object>
-  <object type="destination" gid="14" x="584" y="673">
+  <object type="destination" gid="22" x="584" y="673">
    <properties>
     <property name="direction" value="down"/>
    </properties>
   </object>
-  <object type="destination" gid="14" x="50" y="359">
+  <object type="destination" gid="22" x="50" y="359">
    <properties>
     <property name="direction" value="left"/>
    </properties>
