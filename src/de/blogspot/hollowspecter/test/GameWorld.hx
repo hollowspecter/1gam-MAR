@@ -34,6 +34,7 @@ class GameWorld extends com.haxepunk.World
 		Destination.id = 1;
 		Destination.destCounter = 0;
 		Human.id = 1;
+		TimerManager.getInstance().reset();
 	}
 	
 	public override function begin()

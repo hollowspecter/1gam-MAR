@@ -84,4 +84,10 @@ class TimerManager extends Timer
 	{
 		return _time;
 	}
+	
+	public function reset()
+	{
+		_time = timeBegin;
+		_stopWatchTime = -1;
+	}
 }

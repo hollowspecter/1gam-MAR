@@ -198,15 +198,22 @@ class PlayerObj extends Entity
 		if (Input.check("left"))                                    
 		{
 			sprite.play("left", false);
-			if (_velocity != 0)
-				_rotation += _rotationSpd;
+			if (_velocity != 0) {
+				if (_backGear)
+					_rotation -= _rotationSpd;
+				else
+					_rotation += _rotationSpd;
+			}
 		}
 		
 		if (Input.check("right"))
 		{
 			sprite.play("right", false);
 			if (_velocity != 0) {
-				_rotation -= _rotationSpd;
+				if (_backGear)
+					_rotation += _rotationSpd;
+				else
+					_rotation -= _rotationSpd;
 			}
 		} else if (!Input.check("left")) sprite.play("idle", false);
 		
@@ -309,8 +316,9 @@ class PlayerObj extends Entity
 	{
 		if (_velocity >= 0)
 			_backGear = false;
-		else
+		else {
 			_backGear = true;
+		}
 	}
 	
 	/**
