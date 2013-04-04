@@ -1,9 +1,11 @@
 package de.blogspot.hollowspecter.test;
 import com.haxepunk.HXP;
+import com.haxepunk.tweens.misc.Alarm;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.graphics.Text;
+import com.haxepunk.Tween.TweenType;
 import com.haxepunk.Sfx;
 import com.haxepunk.tweens.sound.SfxFader;
 import com.haxepunk.utils.Input;
@@ -28,7 +30,7 @@ class PlayerObj extends Entity
 	
 	//misc
 	private var sprite:Spritemap;
-	private var _lifes : Int;
+	//private var _lifes : Int;
 	private var _startPos : Array<Float>;
 	private var seats : Seats;
 	private var disablingInput : Bool;
@@ -49,7 +51,13 @@ class PlayerObj extends Entity
 	public static var camX : Float;
 	public static var camY : Float;
 	
-	public function new(x:Int, y:Int, _lifes:Int, ?_maxRotationSpd:Int, ?_maxVelocity:Float, ?_acceleration:Float, ?_breaks:Float)
+	//stores position of about 3 seconds ago!
+	private var resetPosition:Array<Float>;
+	//is position saved? resets every 4 seconds
+	private var lastUpDatedTime:Int;
+	private var saved:Bool;
+	
+	public function new(x:Float, y:Float, ?_maxRotationSpd:Int, ?_maxVelocity:Float, ?_acceleration:Float, ?_breaks:Float)
 	{
 		super(x, y);
 		
@@ -67,7 +75,6 @@ class PlayerObj extends Entity
 		_rotation = 0;
 		_velocity = 0;
 		_rotationSpd = 0;
-		this._lifes = _lifes;
 		
 		//set properties
 		this._maxRotationSpd = (_maxRotationSpd == null) ? 8 : _maxRotationSpd;
@@ -100,6 +107,9 @@ class PlayerObj extends Entity
 		
 		//sfx
 		_sfxHonk = new Sfx("sfx/honk.wav", function() { _honks = false; } );
+		
+		resetPosition = new Array<Float>();
+		resetPosition = _startPos;
 	}
 	
 	public override function update()
@@ -129,6 +139,8 @@ class PlayerObj extends Entity
 		
 		//if 1 seat is taken, activate that humans destination
 		//also activate compasses arrow
+		//also activate the stopwatch!
+		//activate the timer of the human!
 		if (seats.getCurrentID() != 0 && !disablingInput)
 		{
 			var d:Destination = getCurrentDestination();
@@ -136,9 +148,14 @@ class PlayerObj extends Entity
 			var rot:Float =  getRotationTowards(d.x, d.y);
 			_compass.updateRotation(rot);
 			_compass.activate();
+			TimerManager.getInstance().startStopWatch();
+			
+			var h:Human = GameWorld.getHuman(seats.getCurrentID());
+			h.activateTimer();
 		}
 		
 		//when you hit destination, the input will be disabled, u get slower. then kick out the passenger
+		//stops stopwatch
 		if (disablingInput && _velocity < 4)
 		{
 			var h:Human = GameWorld.getHuman(seats.remove());
@@ -164,20 +181,23 @@ class PlayerObj extends Entity
 		//HXP.camera.y = (HXP.camera.y + (y - HXP.halfHeight)) * 0.5;
 		normalizeCamera();
 		
+		savePosition();
+		
 		super.update();
 	}
 	
 	/**
-	 * reduces life.
+	 * reduces time
 	 * sets back velocity, rotation, and position.
 	 */
 	public function death()
 	{
-		setLifes(getLifes() - 1);
+		//setLifes(getLifes() - 1);
 		_velocity = 0;
 		_rotation = 0;
-		x = _startPos[0];
-		y = _startPos[1];
+		x = resetPosition[0];
+		y = resetPosition[1];
+		TimerManager.getInstance().reduceTime(5);
 	}
 	
 	/**
@@ -188,6 +208,18 @@ class PlayerObj extends Entity
 	{
 		if (!_sfxHonk.playing)
 			_sfxHonk.play();
+	}
+	
+	public function savePosition()
+	{
+		if (TimerManager.getInstance().getTime() % 3 == 0 && !saved) {
+			resetPosition = [x, y];
+			lastUpDatedTime = TimerManager.getInstance().getTime();
+			saved = true;
+		}
+		if (lastUpDatedTime != TimerManager.getInstance().getTime()) {
+			saved = false;
+		}
 	}
 	
 	/**
@@ -397,7 +429,7 @@ class PlayerObj extends Entity
 		return rot;
 	}
 	
-	//lifes getter and setter
+	/*lifes getter and setter
 	public function getLifes():Int
 	{
 		return _lifes;
@@ -406,7 +438,7 @@ class PlayerObj extends Entity
 	public function setLifes(lifes:Int)
 	{
 		_lifes = lifes;
-	}
+	}*/
 	
 	public static function getHonks():Bool
 	{

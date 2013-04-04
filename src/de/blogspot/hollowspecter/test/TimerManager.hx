@@ -11,10 +11,11 @@ class TimerManager extends Timer
 	public static var _instance:TimerManager;
 	
 	//time at the beginnning to execute the first customer
-	private static var timeBegin:Int = 100;
+	private static var timeBegin:Int = 60;
 	
 	//time
 	private var _time:Int;
+	private var overallTime:Int;
 	
 	/* If this is -1, it is not being used
 	 * if 0, it just started
@@ -26,6 +27,7 @@ class TimerManager extends Timer
 		super(1000);
 		_time = timeBegin;
 		_stopWatchTime = -1;
+		overallTime = 0;
 	}
 	
 	public static function getInstance():TimerManager
@@ -40,8 +42,28 @@ class TimerManager extends Timer
 	public override function run()
 	{
 		_time--;
+		if (_time != 0)
+			overallTime++;
 		if (_stopWatchTime >= 0)
 			_stopWatchTime++;
+	}
+	
+	/**
+	 * Reduces time by t
+	 * @param	t
+	 */
+	public function reduceTime(t:Int)
+	{
+		_time -= t;
+	}
+	
+	/**
+	 * Increases time by t
+	 * @param	t
+	 */
+	public function increaseTime(t:Int)
+	{
+		_time += t;
 	}
 	
 	/**
@@ -89,5 +111,11 @@ class TimerManager extends Timer
 	{
 		_time = timeBegin;
 		_stopWatchTime = -1;
+		overallTime = 0;
+	}
+	
+	public function getOvTime():Int
+	{
+		return overallTime;
 	}
 }

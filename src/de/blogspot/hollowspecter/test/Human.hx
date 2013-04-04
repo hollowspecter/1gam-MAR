@@ -20,6 +20,7 @@ import nme.display.Sprite;
 class Human extends Entity
 {
 	public static var id:Int = 1;
+	public static var lostClients:Int;
 	
 	//destination chosen from the human before
 	private static var destBefore:Int = 0;
@@ -32,9 +33,11 @@ class Human extends Entity
 	private var _faces:Spritemap;
 	private var _bodies:Spritemap;
 	private var _saying:Text;
-	private static var _speakQueue:Array<String>;
+	private var _timer:Text;
+	private static var _speakQueue:Array<Array<String>>;
 	
 	private var _personCount:Int;
+	
 	
 	//blood animation
 	private var _blood:Spritemap;
@@ -48,6 +51,17 @@ class Human extends Entity
 	//camera position for the human
 	public static var camX:Float = 0;
 	public static var camY:Float = 0;
+	
+	//someones talking
+	private static var soTalking:Bool = false;
+	
+	//the time the player has to achieve destination
+	private var requiredTime:Int;
+	
+	private var talked:Bool;
+	
+	public static var peopleCountTaken:Int;
+	public static var peopleSuccess:Int;
 	
 	//modes
 	//if 0 then it has not entered a car yet
@@ -110,7 +124,14 @@ class Human extends Entity
 		_saying.visible = false;
 		HXP.world.addGraphic(_saying);
 		
-		_speakQueue = new Array<String>();
+		//text for timer
+		_timer = new Text("");
+		_timer.visible = false;
+		_timer.color = 0xFFFFFF;
+		_timer.size = 32;
+		HXP.world.addGraphic(_timer);
+		
+		_speakQueue = new Array<Array<String>>();
 		
 		setHitbox(9 * 3, 6 * 3, 0, 0);
 		Input.define("speak", [Key.T]);
@@ -123,12 +144,13 @@ class Human extends Entity
 			destinationId = chooseDest();
 		}
 		
-		if (carIsInReach() && _gotHonkedAt && mode == 0)
+		if (carIsInReach() && mode == 0)
 		{
 			//rotate towards car and move!
 			rotateTowards(HXP.world.getInstance("player").x, HXP.world.getInstance("player").y);
 			_bodies.angle = _rotation;
-			moveForward(3, ["car"]);
+			if (_gotHonkedAt)
+				moveForward(3, ["car"]);
 		}
 		
 		if (mode == 2)
@@ -136,13 +158,27 @@ class Human extends Entity
 			moveForward(2, ["lava"]);
 		}
 		
+
+		
+		//update timer when it is visible
+		if (_timer.visible)
+		{
+			var p:Int = requiredTime - TimerManager.getInstance().getStopWatch();
+			_timer.text = "Time left for delivery: " + p;
+			
+			if (p == 0 && !talked) {
+				_speakQueue.insert(0, [Speech.tooslow[Std.random(Speech.tooslow.length)], _id + ""]);
+				talked = true;
+			}
+		}
 		//speaking
 		//reposition face image
 		_faces.x = HXP.camera.x + 20;
 		_faces.y = HXP.camera.y + 510;
 		_saying.x = HXP.camera.x + 120;
 		_saying.y = HXP.camera.y + 510;
-		
+		_timer.x = HXP.camera.x + 50;
+		_timer.y = HXP.camera.y + 40;
 		//enabling talking feature
 		talking();
 		
@@ -150,15 +186,29 @@ class Human extends Entity
 		camX = HXP.camera.x;
 		camY = HXP.camera.y;
 		
-		//if (Input.check("speak"))
-			//speak("Luca is doof.\nVivi is cool!",2);
-		
 		super.update();
 	}
 
+	public function activateTimer()
+	{
+		_timer.visible = true;
+	}
+	
+	/**
+	 * Takes the distance from the humans position and the destination
+	 * and returns the time the player has to achieve the destination
+	 * saves in "requiredTime"
+	 * @param	distance
+	 */
+	public function calcTime(distance:Float)
+	{
+		requiredTime = Math.round(distance * (14 / 1500) + 3);
+	}
+	
 	/**
 	 * Shuffles randomly through all the destinations and chooses one.
 	 * Makes sure that no passeger chooses the same destination as the passenger before
+	 * ALSO calculates the required Time for the distance!
 	 * @return returns the id of the destination chosen
 	 */
 	public function chooseDest():Int
@@ -172,6 +222,11 @@ class Human extends Entity
 		} while (n == destBefore);
 		
 		destBefore = n;
+		
+		//calc requ time
+		var d:Destination = GameWorld.getDestination(n);
+		calcTime(distanceFrom(d, false));
+		
 		return n;
 	}
 	
@@ -190,9 +245,8 @@ class Human extends Entity
 			collidable = false;
 			PlayerObj.idAdding = _id;
 			mode = 1;
-			
 			//add text to the speak queue to prevent multiple texts to appear!
-			_speakQueue.insert(0, Speech.destination[Std.random(Speech.destination.length)]);
+			_speakQueue.insert(0, [Speech.destination[Std.random(Speech.destination.length)],_id+""]);
 			
 		} else if (e.type == "car" && PlayerObj.idAdding == -1 && mode == 0)
 		{
@@ -211,11 +265,12 @@ class Human extends Entity
 	 */
 	public function talking()
 	{
-		if (_speakQueue.length != 0)
+	if (_speakQueue.length != 0 && !soTalking && _speakQueue[_speakQueue.length-1][1] == _id+"")
 		{
+			soTalking = true;
 			_faces.visible = true;
 			_saying.visible = true;
-			_saying.text = _speakQueue.pop();
+			_saying.text = _speakQueue.pop()[0];
 			addTween(new Alarm(2.5, function(o:Dynamic) { stopSpeak(); }, TweenType.OneShot), true);
 		}
 	}
@@ -226,11 +281,11 @@ class Human extends Entity
 		return super.moveCollideY(e);
 	}
 	
-	//not used anymore
 	public function speak(text:String, dur:Float)
 	{
 		_faces.visible = true;
 		_saying.visible = true;
+		soTalking = true;
 		_saying.text = text;
 		addTween(new Alarm(dur, function(o:Dynamic) { stopSpeak(); }, TweenType.OneShot), true);
 	}
@@ -239,6 +294,7 @@ class Human extends Entity
 	{
 		_faces.visible = false;
 		_saying.visible = false;
+		soTalking = false;
 	}
 	
 	//check if car is close-by
@@ -294,6 +350,23 @@ class Human extends Entity
 	{
 		visible = true;
 		collidable = false;
+		_timer.visible = false;
+		peopleCountTaken++;
+		
+		var dif:Int = requiredTime - TimerManager.getInstance().stopStopWatch();
+		//successful:
+		if (dif > 0)
+		{
+			var p:Int = Math.round((18 / 25) * requiredTime + dif);
+			TimerManager.getInstance().increaseTime(p);
+			_speakQueue.insert(0, [Speech.thankyou[Std.random(Speech.thankyou.length)], _id + ""]);
+			peopleSuccess++;
+			
+		} else {
+			_speakQueue.insert(0, [Speech.hate[Std.random(Speech.hate.length)], _id + ""]);
+			lostClients++;
+		}
+		
 		addTween(new Alarm(1.5, function(o:Dynamic) { collidable = true; }, TweenType.OneShot), true);
 		mode = 2;
 		type = "evilHuman";
@@ -317,6 +390,11 @@ class Human extends Entity
 		mode = 3;
 		type = "deadHuman";
 		_blood.play("die", false);
-		addTween(new Alarm(5, function(o:Dynamic) {HXP.world.remove(this); }, TweenType.OneShot), true);
+		addTween(new Alarm(5, function(o:Dynamic) { HXP.world.remove(this); _faces.visible = false; _saying.visible = false; }, TweenType.OneShot), true);
+	}
+	
+	public function getID():Int
+	{
+		return _id;
 	}
 }

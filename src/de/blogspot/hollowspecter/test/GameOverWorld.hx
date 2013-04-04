@@ -13,6 +13,7 @@ import com.haxepunk.graphics.Text;
 class GameOverWorld extends World
 {
 	var title_:Text;
+	var highscore_:Text;
 
 	public function new() 
 	{
@@ -38,6 +39,17 @@ class GameOverWorld extends World
 		title_.x = HXP.halfWidth;
 		title_.visible = true;
 		addGraphic(title_);
+		
+		//highscore text
+		highscore_ = new Text("People you collected: " + Human.peopleCountTaken + "/"+Human.id + "\n"+
+							  "People you successfully delivered: " + Human.peopleSuccess + "/" + Human.peopleCountTaken + "\n" +
+							  "Time you have lasted: " + TimerManager.getInstance().getOvTime());
+		highscore_.color = 0xFFFFFF;
+		highscore_.size = 40;
+		highscore_.x = 20;
+		highscore_.y = 450;
+		highscore_.visible = true;
+		addGraphic(highscore_);
 	}
 	
 	public override function update()

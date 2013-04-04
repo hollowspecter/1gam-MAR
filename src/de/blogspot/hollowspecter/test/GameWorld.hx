@@ -18,15 +18,11 @@ class GameWorld extends com.haxepunk.World
 	public static var kMaxWidth:Int;
 	public static var kMaxHeight:Int;
 	public var player:PlayerObj;
-	public var lifeCounter:Text;	
 	public var timer:Text;
 	
 	public function new()
 	{
 		super();
-		
-		player = new PlayerObj(500, 150, 3);
-		player_ = player;
 		humans = new Array<Human>();
 		destinations = new Array<Destination>();
 		
@@ -34,12 +30,17 @@ class GameWorld extends com.haxepunk.World
 		Destination.id = 1;
 		Destination.destCounter = 0;
 		Human.id = 1;
+		Human.lostClients = 0;
 		TimerManager.getInstance().reset();
+		Human.peopleCountTaken = 0;
+		Human.peopleSuccess = 0;
 	}
 	
 	public override function begin()
 	{
-		loadLevel();
+		var p:Array<Float> = loadLevel();
+		player = new PlayerObj(p[0], p[1]);
+		player_ = player;
 		add(player);
 		HUD();
 		add(player.getCompass());
@@ -53,7 +54,7 @@ class GameWorld extends com.haxepunk.World
 		updateHUD();
 		//debugControls();
 		
-		if (player.getLifes() <= 0)
+		if (TimerManager.getInstance().getTime() < 0 || Human.peopleCountTaken == Human.id)
 		{
 			HXP.world = new GameOverWorld();
 		}
@@ -79,10 +80,11 @@ class GameWorld extends com.haxepunk.World
 	/**
 	 * Deals with the TMX map
 	 */
-	public function loadLevel()
+	public function loadLevel():Array<Float>
 	{
+		var p:Array<Float> = new Array<Float>();
 		//load map with tiles
-		var e = new TmxEntity("maps/test.tmx");
+		var e = new TmxEntity("maps/Level1.tmx");
 		e.loadGraphic("gfx/tileset_scaled.png", ["lava", "street"]);
 		e.loadMask("collision", "lava");
 		add(e);
@@ -111,23 +113,21 @@ class GameWorld extends com.haxepunk.World
 					add(h);
 					humans.push(h);
 				}
+				
+				if (obj.type == "player")
+				{
+					p = [obj.x, obj.y];
+				}
 			}
 		}
+		return p;
 	}
 	
 	/**
 	 * HUD stuff that is played in begin()
 	 */
 	public function HUD()
-	{
-		//loading lifeCounter
-		lifeCounter = new Text(player.getLifes()+" x lives");
-		lifeCounter.color = 0xFFFFFF;
-		lifeCounter.size = 32;
-		lifeCounter.x = 10;
-		lifeCounter.y = 10;
-		addGraphic(lifeCounter);
-		
+	{	
 		//timer
 		timer = new Text(TimerManager.getInstance().getTime()+"");
 		timer.color = 0xFFFFFF;
@@ -143,13 +143,20 @@ class GameWorld extends com.haxepunk.World
 	 */
 	public function updateHUD()
 	{
-		lifeCounter.text = player.getLifes() + " x lifes";
+		/*lifeCounter.text = player.getLifes() + " x lifes";
 		lifeCounter.x = HXP.world.camera.x + 10;
-		lifeCounter.y = HXP.world.camera.y + 10;
+		lifeCounter.y = HXP.world.camera.y + 10;*/
 		
-		timer.text = TimerManager.getInstance().getTime()+"";
+		var t:Int = TimerManager.getInstance().getTime();
+		
+		timer.text = t+"";
 		timer.x = HXP.world.camera.x + 10;
-		timer.y = HXP.world.camera.y + 40;
+		timer.y = HXP.world.camera.y + 40;	
+		
+		if (t < 10)
+		{
+			timer.color = 0xff0000;
+		}
 	}
 	
 	/**
